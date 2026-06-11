@@ -1,0 +1,33 @@
+export const queryKeys = {
+  schools: {
+    all:     ()           => ['schools'] as const,
+    active:  ()           => ['schools', 'active'] as const,
+    detail:  (id: string) => ['schools', id] as const,
+    culture: (id: string) => ['schools', id, 'culture'] as const,
+  },
+  auth: {
+    me: () => ['auth', 'me'] as const,
+  },
+  dailyContent: {
+    today: () => ['daily-content', 'today'] as const,
+  },
+  notes: {
+    all:    (filters?: object) => ['notes', filters] as const,
+    school: (filters?: object) => ['notes', 'school', filters] as const,
+    detail: (id: string)       => ['notes', id] as const,
+    status: (id: string)       => ['notes', id, 'status'] as const,
+  },
+  conformity: {
+    all:    (filters?: object) => ['conformity', filters] as const,
+    detail: (id: string)       => ['conformity', id] as const,
+    status: (id: string)       => ['conformity', id, 'status'] as const,
+  },
+  adminUsers: {
+    all:    (filters?: object) => ['admin', 'users', filters] as const,
+    detail: (id: string)       => ['admin', 'users', id] as const,
+  },
+  adminSchool:     () => ['admin', 'school'] as const,
+  adminCulture:    () => ['admin', 'culture'] as const,
+  adminDailyContent: (filters?: object) => ['admin', 'daily-content', filters] as const,
+  platformSchools: () => ['platform', 'schools'] as const,
+};
