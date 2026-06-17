@@ -10,7 +10,7 @@ const noteStatusMap: Record<NoteStatus, { label: string; dot: string; className:
 };
 
 const conformityStatusMap: Record<ConformityStatus, { label: string; dot: string; className: string }> = {
-  PENDING:    { label: 'Pending',     dot: 'bg-gray-400',   className: 'bg-gray-50 text-gray-600 ring-1 ring-gray-200'         },
+  PENDING:    { label: 'Pending',     dot: 'bg-muted-foreground', className: 'bg-muted text-muted-foreground ring-1 ring-border' },
   PROCESSING: { label: 'Analysing…', dot: 'bg-violet-400', className: 'bg-violet-50 text-violet-700 ring-1 ring-violet-200'   },
   DONE:       { label: 'Done ✓',     dot: 'bg-emerald-400',className: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' },
   FAILED:     { label: 'Failed',     dot: 'bg-red-400',    className: 'bg-red-50 text-red-700 ring-1 ring-red-200'            },

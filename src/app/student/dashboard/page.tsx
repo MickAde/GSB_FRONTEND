@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { Upload, BookOpen, CheckCircle, Layers, ArrowRight } from 'lucide-react';
+import { Upload, BookOpen, CheckCircle, Layers, ArrowRight, Brain, Flame } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { DailyContentBanner } from '@/components/common/DailyContentBanner';
 import { NoteCard } from '@/components/notes/NoteCard';
@@ -8,10 +9,13 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNotes } from '@/hooks/useNotes';
 import { useTimeGreeting } from '@/hooks/useTimeGreeting';
+import { getPerformanceStats } from '@/lib/api/quiz';
+import { queryKeys } from '@/lib/query-keys';
 
 export default function StudentDashboardPage() {
   const { data: user }              = useCurrentUser();
   const { data: notes, isLoading }  = useNotes();
+  const { data: perf }              = useQuery({ queryKey: queryKeys.quiz.performance(), queryFn: getPerformanceStats });
 
   const greeting = useTimeGreeting();
 
@@ -20,10 +24,15 @@ export default function StudentDashboardPage() {
   const subjects    = [...new Set(notes?.results?.map((n) => n.subject).filter(Boolean))].length;
   const needsReview = notes?.results?.filter((n) => n.status === 'AWAITING_STUDENT_APPROVAL').length ?? 0;
 
+  const readiness = perf ? Math.round(perf.readiness_score) : null;
+  const streak    = perf?.study_streak ?? null;
+
   const statCards = [
     { label: 'Total Notes',     value: totalNotes, icon: Layers,      bg: 'from-violet-50 to-white',   ring: 'text-primary',        iconBg: 'bg-primary/10' },
     { label: 'Summaries Ready', value: readyNotes, icon: CheckCircle, bg: 'from-emerald-50 to-white',  ring: 'text-emerald-600',    iconBg: 'bg-emerald-100' },
     { label: 'Subjects',        value: subjects,   icon: BookOpen,    bg: 'from-amber-50 to-white',    ring: 'text-amber-600',      iconBg: 'bg-amber-100' },
+    ...(readiness !== null ? [{ label: 'Readiness Score', value: `${readiness}%`, icon: Brain, bg: 'from-blue-50 to-white', ring: 'text-blue-600', iconBg: 'bg-blue-100' }] : []),
+    ...(streak !== null    ? [{ label: 'Study Streak',    value: `${streak}d`,    icon: Flame, bg: 'from-orange-50 to-white', ring: 'text-orange-600', iconBg: 'bg-orange-100' }] : []),
   ];
 
   return (
@@ -70,7 +79,7 @@ export default function StudentDashboardPage() {
       )}
 
       {/* ── Stat cards ── */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {statCards.map(({ label, value, icon: Icon, bg, ring, iconBg }) => (
           <div
             key={label}

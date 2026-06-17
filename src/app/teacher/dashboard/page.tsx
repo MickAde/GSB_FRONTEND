@@ -21,7 +21,7 @@ export default function TeacherDashboardPage() {
 
   const statCards = [
     { label: 'My Notes',          value: notes?.count        ?? '—', icon: BookOpen,  bg: 'from-primary/5 to-white',  ring: 'text-primary'     },
-    { label: 'Conformity Reports',value: conformity?.length  ?? '—', icon: BarChart2, bg: 'from-emerald-50 to-white', ring: 'text-emerald-600' },
+    { label: 'Conformity Reports',value: conformity?.count   ?? '—', icon: BarChart2, bg: 'from-emerald-50 to-white', ring: 'text-emerald-600' },
   ];
 
   return (

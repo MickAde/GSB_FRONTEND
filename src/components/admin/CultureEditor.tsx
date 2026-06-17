@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect } from 'react';
 import { useForm, useFieldArray, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -57,7 +57,7 @@ export function CultureEditor() {
     }
   };
 
-  if (isLoading) return <div className="animate-pulse h-64 rounded-xl bg-gray-100" />;
+  if (isLoading) return <div className="animate-pulse h-64 rounded-xl bg-muted" />;
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -70,7 +70,7 @@ export function CultureEditor() {
         <TabsContent value="identity" className="mt-4 space-y-4">
           <div className="space-y-1">
             <Label>Philosophy</Label>
-            <Textarea {...form.register('philosophy')} rows={3} placeholder="The guiding philosophy of your school…" />
+            <Textarea {...form.register('philosophy')} rows={3} placeholder="The guiding philosophy of your school..." />
           </div>
           <div className="space-y-1">
             <Label>Mission Statement</Label>
@@ -82,7 +82,7 @@ export function CultureEditor() {
           </div>
           <div className="space-y-1">
             <Label>Core Values</Label>
-            <Textarea {...form.register('core_values')} rows={2} placeholder="Integrity, Excellence, Discipline…" />
+            <Textarea {...form.register('core_values')} rows={2} placeholder="Integrity, Excellence, Discipline..." />
           </div>
           <div className="space-y-1">
             <Label>School Creed</Label>
@@ -90,7 +90,7 @@ export function CultureEditor() {
           </div>
           <div className="space-y-1">
             <Label>Institutional Principles</Label>
-            <Textarea {...form.register('institutional_principles')} rows={3} placeholder="Core principles guiding institutional decisions…" />
+            <Textarea {...form.register('institutional_principles')} rows={3} placeholder="Core principles guiding institutional decisions..." />
           </div>
         </TabsContent>
 
@@ -124,8 +124,8 @@ export function CultureEditor() {
       </Tabs>
 
       <div className="flex justify-end">
-        <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Saving…' : 'Save Culture Profile'}
+        <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? 'Savingâ€¦' : 'Save Culture Profile'}
         </Button>
       </div>
     </form>

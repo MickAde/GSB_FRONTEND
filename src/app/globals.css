@@ -166,6 +166,17 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    overflow-wrap: break-word;
+  }
+
+  /* Let inputs/buttons use their own overflow model */
+  input, select, button {
+    overflow-wrap: normal;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
 
   body {
@@ -204,6 +215,13 @@
   .gradient-emerald {
     background: linear-gradient(135deg, hsl(160 80% 40%), hsl(175 75% 35%));
   }
+}
+
+/* ── Print styles ──────────────────────────────────────────────────────────── */
+@media print {
+  aside, nav, .print\:hidden { display: none !important; }
+  body { background: white !important; color: black !important; }
+  main { padding: 0 !important; }
 }
 
 /* ── Custom scrollbar ──────────────────────────────────────────────────────── */

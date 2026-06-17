@@ -8,10 +8,10 @@ export default function ResetPasswordPage(props: { searchParams: Promise<{ uid?:
   const token = searchParams.token ?? '';
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm shadow-lg">
         <CardHeader className="pb-2">
-          <h1 className="text-2xl font-bold text-gray-900">Set new password</h1>
+          <h1 className="text-2xl font-bold text-foreground">Set new password</h1>
         </CardHeader>
         <CardContent>
           <ResetPasswordForm uid={uid} token={token} />

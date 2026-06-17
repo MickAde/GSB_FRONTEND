@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,10 +39,10 @@ export function ForgotPasswordForm() {
       </div>
       <Button
         type="submit"
-        className="w-full bg-indigo-600 hover:bg-indigo-700"
+        className="w-full bg-primary hover:bg-primary/90"
         disabled={form.formState.isSubmitting}
       >
-        {form.formState.isSubmitting ? 'Sending…' : 'Send reset link'}
+        {form.formState.isSubmitting ? 'Sendingâ€¦' : 'Send reset link'}
       </Button>
     </form>
   );

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -20,16 +20,17 @@ export default function ConformityListPage() {
 
   if (isLoading) return <LoadingPage />;
 
-  const reports = data ?? [];
+  const reports = data?.results ?? [];
+  const count   = data?.count ?? 0;
 
   return (
     <div className="max-w-4xl space-y-6">
       <PageHeader
         title="Conformity Reports"
-        description={`${reports.length} report${reports.length !== 1 ? 's' : ''}`}
+        description={`${count} report${count !== 1 ? 's' : ''}`}
         actions={
           <Link href="/teacher/conformity/new">
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
+            <Button className="bg-primary hover:bg-primary/90">
               <Plus className="mr-2 h-4 w-4" /> New Report
             </Button>
           </Link>
@@ -37,7 +38,7 @@ export default function ConformityListPage() {
       />
 
       {reports.length === 0 ? (
-        <div className="rounded-xl border border-dashed py-16 text-center text-gray-400">
+        <div className="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
           <p className="font-medium">No conformity reports yet</p>
           <p className="mt-1 text-sm">Create a report to compare a student note against a teacher reference.</p>
         </div>
@@ -53,15 +54,15 @@ export default function ConformityListPage() {
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900 truncate">
-                      {report.student_name} · {report.subject}
+                    <p className="font-semibold text-foreground truncate">
+                      {report.student_name} Â· {report.subject}
                     </p>
-                    <p className="mt-0.5 text-xs text-gray-400">{formatDate(report.generated_at)}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{formatDate(report.generated_at)}</p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium
                     ${report.status === 'DONE'       ? 'bg-green-100 text-green-700' : ''}
                     ${report.status === 'FAILED'     ? 'bg-red-100 text-red-700' : ''}
-                    ${report.status === 'PENDING'    ? 'bg-gray-100 text-gray-600' : ''}
+                    ${report.status === 'PENDING'    ? 'bg-muted text-muted-foreground' : ''}
                     ${report.status === 'PROCESSING' ? 'bg-blue-100 text-blue-600' : ''}
                   `}>
                     {report.status}

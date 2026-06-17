@@ -18,7 +18,7 @@ export function PaginationControls({ count, totalPages, currentPage, pageSize = 
 
   return (
     <div className="flex items-center justify-between border-t pt-4">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted-foreground">
         Showing {start}–{end} of {count} results
       </p>
       <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ export function PaginationControls({ count, totalPages, currentPage, pageSize = 
           <ChevronLeft className="h-4 w-4" />
           Previous
         </Button>
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-foreground/80">
           {currentPage} / {totalPages}
         </span>
         <Button

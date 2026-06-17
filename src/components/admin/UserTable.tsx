@@ -21,8 +21,8 @@ const roleColors: Record<UserRole, string> = {
   STUDENT:    'bg-blue-100 text-blue-700',
   TEACHER:    'bg-green-100 text-green-700',
   MAIN_ADMIN: 'bg-purple-100 text-purple-700',
-  SUB_ADMIN:  'bg-indigo-100 text-indigo-700',
-  VISITOR:    'bg-gray-100 text-gray-600',
+  SUB_ADMIN:  'bg-primary/10 text-primary',
+  VISITOR:    'bg-muted text-muted-foreground',
 };
 
 interface Props {
@@ -88,15 +88,15 @@ export function UserTable({ users, currentRole, onEdit, onSetPassword, onView }:
                     {user.role.replace('_', ' ')}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-sm text-gray-500">
+                <TableCell className="text-sm text-muted-foreground">
                   {user.email ?? user.username ?? '—'}
                 </TableCell>
                 <TableCell>
-                  <Badge className={user.is_active ? 'bg-green-100 text-green-700 border-0' : 'bg-gray-100 text-gray-500 border-0'}>
+                  <Badge className={user.is_active ? 'bg-green-100 text-green-700 border-0' : 'bg-muted text-muted-foreground border-0'}>
                     {user.is_active ? 'Active' : 'Inactive'}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-sm text-gray-500">{formatDate(user.date_joined)}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{formatDate(user.date_joined)}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

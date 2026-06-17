@@ -1,7 +1,7 @@
 'use client';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, File, X } from 'lucide-react';
+import { UploadCloud, FileCheck, X } from 'lucide-react';
 import { cn, formatFileSize } from '@/lib/utils';
 
 const ACCEPT = {
@@ -19,17 +19,24 @@ const ACCEPT = {
   'text/plain':       ['.txt'],
 };
 
+const FILE_TYPE_HINTS = [
+  { emoji: '📄', label: 'PDF' },
+  { emoji: '📷', label: 'Photo' },
+  { emoji: '🎤', label: 'Audio' },
+  { emoji: '📝', label: 'Text' },
+];
+
 interface Props {
-  onFile:   (file: File) => void;
-  file?:    File | null;
-  onClear?: () => void;
+  onFile:    (file: File) => void;
+  file?:     File | null;
+  onClear?:  () => void;
   disabled?: boolean;
 }
 
 export function NoteUploadDropzone({ onFile, file, onClear, disabled }: Props) {
   const onDrop = useCallback(
     (accepted: File[]) => { if (accepted[0]) onFile(accepted[0]); },
-    [onFile]
+    [onFile],
   );
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
@@ -42,15 +49,20 @@ export function NoteUploadDropzone({ onFile, file, onClear, disabled }: Props) {
 
   if (file) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4">
-        <File className="h-8 w-8 text-green-600" />
+      <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100">
+          <FileCheck className="h-5 w-5 text-emerald-600" />
+        </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-gray-900">{file.name}</p>
-          <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+          <p className="truncate text-sm font-semibold text-foreground">{file.name}</p>
+          <p className="text-xs text-muted-foreground">{formatFileSize(file.size)} · Ready to upload</p>
         </div>
         {onClear && (
-          <button onClick={onClear} className="rounded-full p-1 hover:bg-green-100">
-            <X className="h-4 w-4 text-gray-500" />
+          <button
+            onClick={onClear}
+            className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-emerald-100 hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
           </button>
         )}
       </div>
@@ -63,22 +75,40 @@ export function NoteUploadDropzone({ onFile, file, onClear, disabled }: Props) {
         {...getRootProps()}
         className={cn(
           'flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-10 text-center transition-colors',
-          isDragActive ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50',
-          disabled && 'cursor-not-allowed opacity-50'
+          isDragActive
+            ? 'border-primary bg-primary/10'
+            : 'border-border bg-muted/50 hover:border-primary/50 hover:bg-primary/5',
+          disabled && 'cursor-not-allowed opacity-50',
         )}
       >
         <input {...getInputProps()} />
-        <Upload className="mb-3 h-10 w-10 text-gray-400" />
-        <p className="font-medium text-gray-700">
-          {isDragActive ? 'Drop your file here' : 'Drag & drop your note here, or click to browse'}
+        <UploadCloud
+          className={cn(
+            'mb-3 h-12 w-12 transition-colors',
+            isDragActive ? 'text-primary' : 'text-muted-foreground/40',
+          )}
+        />
+        <p className="font-semibold text-foreground/80">
+          {isDragActive ? 'Drop it here!' : 'Drag your note here, or click to browse'}
         </p>
-        <p className="mt-1 text-xs text-gray-400">PDF, Images (JPG/PNG/WEBP), Audio (MP3/WAV), or Text — max 20MB</p>
+        <p className="mt-1 text-xs text-muted-foreground">Maximum file size: 20 MB</p>
+
+        {/* File type hints */}
+        <div className="mt-4 flex items-center gap-3">
+          {FILE_TYPE_HINTS.map(({ emoji, label }) => (
+            <div key={label} className="flex flex-col items-center gap-0.5">
+              <span className="text-lg">{emoji}</span>
+              <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
+            </div>
+          ))}
+        </div>
       </div>
+
       {fileRejections.length > 0 && (
         <p className="mt-2 text-xs text-red-500">
           {fileRejections[0]?.errors[0]?.code === 'file-too-large'
-            ? 'File is too large. Maximum size is 20MB.'
-            : 'File type not supported.'}
+            ? 'File is too large. Maximum size is 20 MB.'
+            : 'That file type is not supported. Try a PDF, image, audio, or text file.'}
         </p>
       )}
     </div>

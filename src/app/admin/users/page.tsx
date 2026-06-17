@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
             <Link href="/admin/users/import">
               <Button variant="outline"><Upload className="mr-2 h-4 w-4" />Import Students</Button>
             </Link>
-            <Button onClick={() => { setEditUser(null); setFormOpen(true); }} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={() => { setEditUser(null); setFormOpen(true); }} className="bg-primary hover:bg-primary/90">
               <Plus className="mr-2 h-4 w-4" />Add User
             </Button>
           </>
@@ -77,18 +77,18 @@ export default function AdminUsersPage() {
 
       {/* Search */}
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search users…"
+          placeholder="Search usersâ€¦"
           className="pl-9"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {data?.length ? (
+      {data?.results?.length ? (
         <UserTable
-          users={data}
+          users={data.results}
           currentRole={mounted ? role : null}
           onEdit={(u) => { setEditUser(u); setFormOpen(true); }}
           onSetPassword={(u) => { setPwUser(u); pwForm.reset(); }}
@@ -113,7 +113,7 @@ export default function AdminUsersPage() {
       <Dialog open={!!pwUser} onOpenChange={(o) => !o && setPwUser(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Set Password — {pwUser?.first_name}</DialogTitle>
+            <DialogTitle>Set Password â€” {pwUser?.first_name}</DialogTitle>
           </DialogHeader>
           <form onSubmit={pwForm.handleSubmit(onSetPassword)} className="space-y-4">
             <div className="space-y-1">
@@ -128,8 +128,8 @@ export default function AdminUsersPage() {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" type="button" onClick={() => setPwUser(null)}>Cancel</Button>
-              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={pwForm.formState.isSubmitting}>
-                {pwForm.formState.isSubmitting ? 'Saving…' : 'Set Password'}
+              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={pwForm.formState.isSubmitting}>
+                {pwForm.formState.isSubmitting ? 'Savingâ€¦' : 'Set Password'}
               </Button>
             </div>
           </form>

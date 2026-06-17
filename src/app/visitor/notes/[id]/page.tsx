@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { ArrowLeft, Download, Trash2 } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +19,7 @@ import { formatDate, formatFileSize } from '@/lib/utils';
 
 export default function VisitorNoteDetailPage(props: { params: Promise<{ id: string }> }) {
   const { id } = use(props.params);
-  const { data: note, isLoading } = useNoteDetail(id);
+  const { data: note, isLoading, isError } = useNoteDetail(id);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting]       = useState(false);
   const qc     = useQueryClient();
@@ -37,7 +37,22 @@ export default function VisitorNoteDetailPage(props: { params: Promise<{ id: str
   };
 
   if (isLoading) return <LoadingPage />;
-  if (!note)     return <p className="p-6 text-red-500">Note not found.</p>;
+  if (isError || !note) return (
+    <div className="flex max-w-md flex-col items-center gap-5 pt-16 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+        <AlertTriangle className="h-8 w-8 text-red-500" />
+      </div>
+      <div>
+        <h2 className="text-lg font-bold text-foreground">Note not found</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          This note may have been deleted or you don&apos;t have permission to access it.
+        </p>
+      </div>
+      <Link href="/visitor/notes">
+        <Button variant="outline">← Back to My Notes</Button>
+      </Link>
+    </div>
+  );
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -45,8 +60,8 @@ export default function VisitorNoteDetailPage(props: { params: Promise<{ id: str
         <Link href="/visitor/notes">
           <Button variant="ghost" size="sm"><ArrowLeft className="mr-1 h-4 w-4" /> Notes</Button>
         </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold break-words text-gray-900">{note.file_name}</h1>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-bold break-words text-foreground">{note.file_name}</h1>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <NoteStatusBadge status={note.status} />
             {note.subject && <Badge variant="outline">{note.subject}</Badge>}
@@ -74,8 +89,8 @@ export default function VisitorNoteDetailPage(props: { params: Promise<{ id: str
             { label: 'Updated',  value: formatDate(note.updated_at) },
           ].map(({ label, value }) => (
             <div key={label}>
-              <p className="text-xs text-gray-400">{label}</p>
-              <p className="font-medium text-gray-800">{value}</p>
+              <p className="text-xs text-muted-foreground">{label}</p>
+              <p className="font-medium text-foreground">{value}</p>
             </div>
           ))}
         </CardContent>
@@ -100,7 +115,7 @@ export default function VisitorNoteDetailPage(props: { params: Promise<{ id: str
         </Card>
       ) : (
         <Card>
-          <CardContent className="py-8 text-center text-sm text-gray-400">Processing…</CardContent>
+          <CardContent className="py-8 text-center text-sm text-muted-foreground">Processing…</CardContent>
         </Card>
       )}
 

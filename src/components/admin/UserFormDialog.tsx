@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -164,8 +164,8 @@ export function UserFormDialog({ open, onOpenChange, editUser, currentRole }: Pr
             <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Saving…' : editUser ? 'Save Changes' : 'Create User'}
+            <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Savingâ€¦' : editUser ? 'Save Changes' : 'Create User'}
             </Button>
           </div>
         </form>

@@ -19,9 +19,9 @@ export function ConformityReportCard({ report, basePath }: Props) {
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className="font-semibold text-gray-900">{report.student_name}</p>
-            <p className="text-sm text-gray-500">{report.subject}</p>
-            <p className="mt-1 text-xs text-gray-400">{formatDate(report.generated_at)}</p>
+            <p className="font-semibold text-foreground">{report.student_name}</p>
+            <p className="text-sm text-muted-foreground">{report.subject}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{formatDate(report.generated_at)}</p>
           </div>
           <div className="flex flex-col items-end gap-1">
             {report.status === 'DONE' ? (
@@ -33,7 +33,7 @@ export function ConformityReportCard({ report, basePath }: Props) {
         </div>
         <Link
           href={`${basePath}/${report.id}`}
-          className="mt-3 block text-xs font-medium text-indigo-600 hover:underline"
+          className="mt-3 block text-xs font-medium text-primary hover:underline"
         >
           View Report →
         </Link>

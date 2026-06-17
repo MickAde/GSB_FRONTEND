@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -55,7 +55,7 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
     <main className="flex min-h-screen items-center justify-center">
       <div className="text-center">
         <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <p className="text-gray-500">Verifying your email…</p>
+        <p className="text-muted-foreground">Verifying your emailâ€¦</p>
       </div>
     </main>
   );
@@ -64,8 +64,8 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
     <main className="flex min-h-screen items-center justify-center">
       <div className="text-center">
         <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-500" />
-        <h1 className="text-xl font-bold text-gray-900">Email verified!</h1>
-        <p className="mt-1 text-gray-500">Redirecting to your dashboard…</p>
+        <h1 className="text-xl font-bold text-foreground">Email verified!</h1>
+        <p className="mt-1 text-muted-foreground">Redirecting to your dashboardâ€¦</p>
       </div>
     </main>
   );
@@ -74,15 +74,15 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
     <main className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm text-center">
         <XCircle className="mx-auto mb-4 h-16 w-16 text-amber-500" />
-        <h1 className="text-xl font-bold text-gray-900">Verification link expired</h1>
-        <p className="mt-1 mb-6 text-gray-500">Enter your email to receive a new link.</p>
+        <h1 className="text-xl font-bold text-foreground">Verification link expired</h1>
+        <p className="mt-1 mb-6 text-muted-foreground">Enter your email to receive a new link.</p>
         <div className="space-y-3">
           <div className="space-y-1">
             <Label>Email Address</Label>
             <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-          <Button className="w-full bg-indigo-600 hover:bg-indigo-700" onClick={handleResend} disabled={resending || !email}>
-            {resending ? 'Sending…' : 'Resend verification email'}
+          <Button className="w-full bg-primary hover:bg-primary/90" onClick={handleResend} disabled={resending || !email}>
+            {resending ? 'Sendingâ€¦' : 'Resend verification email'}
           </Button>
         </div>
       </div>
@@ -93,9 +93,9 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
     <main className="flex min-h-screen items-center justify-center px-4">
       <div className="text-center">
         <XCircle className="mx-auto mb-4 h-16 w-16 text-red-500" />
-        <h1 className="text-xl font-bold text-gray-900">Invalid verification link</h1>
-        <p className="mt-1 text-gray-500">This link is not valid.</p>
-        <Link href="/register" className="mt-4 inline-block text-indigo-600 hover:underline">
+        <h1 className="text-xl font-bold text-foreground">Invalid verification link</h1>
+        <p className="mt-1 text-muted-foreground">This link is not valid.</p>
+        <Link href="/register" className="mt-4 inline-block text-primary hover:underline">
           Back to registration
         </Link>
       </div>

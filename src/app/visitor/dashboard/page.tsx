@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,12 +19,12 @@ export default function VisitorDashboardPage() {
             <p className="text-sm font-medium text-muted-foreground">{greeting.text} {greeting.emoji}</p>
           )}
           <h1 className="mt-0.5 text-3xl font-bold font-display text-foreground">
-            Hey, {user?.first_name ?? '…'}!
+            Hey, {user?.first_name ?? 'â€¦'}!
           </h1>
           <p className="mt-1 text-muted-foreground">Welcome to your visitor trial.</p>
         </div>
         <Link href="/visitor/notes/upload">
-          <Button className="bg-indigo-600 hover:bg-indigo-700">Upload Note</Button>
+          <Button className="bg-primary hover:bg-primary/90">Upload Note</Button>
         </Link>
       </div>
 

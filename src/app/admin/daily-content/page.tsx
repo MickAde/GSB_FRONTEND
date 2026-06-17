@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -79,7 +79,7 @@ export default function DailyContentPage() {
         title="Daily Content"
         description="Manage daily quotes, tips, and insights for each role."
         actions={
-          <Button onClick={openCreate} className="bg-indigo-600 hover:bg-indigo-700">
+          <Button onClick={openCreate} className="bg-primary hover:bg-primary/90">
             <Plus className="mr-2 h-4 w-4" /> Add Content
           </Button>
         }
@@ -102,7 +102,7 @@ export default function DailyContentPage() {
           </DialogHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {editItem ? (
-              <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-500 space-y-1">
+              <div className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground space-y-1">
                 <p><strong>Type:</strong> {editItem.content_type.replace('_', ' ')}</p>
                 <p><strong>Date:</strong> {editItem.display_date}</p>
                 <p className="text-xs">Type and date cannot be changed. Delete and recreate to change them.</p>
@@ -144,8 +144,8 @@ export default function DailyContentPage() {
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Savingâ€¦' : 'Save'}
               </Button>
             </div>
           </form>

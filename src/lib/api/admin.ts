@@ -1,5 +1,6 @@
 import apiClient from './client';
 import type {
+  PaginatedResponse,
   SchoolAdmin,
   SchoolCulture,
   SchoolCulturePayload,
@@ -43,8 +44,8 @@ export const updateDailyContent = (
 export const deleteDailyContent = (id: string): Promise<void> =>
   apiClient.delete(`/admin/daily-content/${id}/`).then(() => undefined);
 
-export const getUsers = (filters?: UserFilters): Promise<UserListItem[]> =>
-  apiClient.get<UserListItem[]>('/admin/users/', { params: filters }).then((r) => r.data);
+export const getUsers = (filters?: UserFilters): Promise<PaginatedResponse<UserListItem>> =>
+  apiClient.get<PaginatedResponse<UserListItem>>('/admin/users/', { params: filters }).then((r) => r.data);
 
 export const createUser = (payload: CreateUserPayload): Promise<UserDetail> =>
   apiClient.post<UserDetail>('/admin/users/', payload).then((r) => r.data);

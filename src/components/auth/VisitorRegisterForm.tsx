@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -69,11 +69,11 @@ export function VisitorRegisterForm() {
         <div className="rounded-full bg-green-100 p-4">
           <CheckCircle2 className="h-10 w-10 text-green-600" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900">Check your inbox!</h2>
-        <p className="text-sm text-gray-500">We&apos;ve sent a verification link to <strong>{email}</strong></p>
-        <p className="text-xs text-gray-400">The link expires in 24 hours.</p>
+        <h2 className="text-xl font-semibold text-foreground">Check your inbox!</h2>
+        <p className="text-sm text-muted-foreground">We&apos;ve sent a verification link to <strong>{email}</strong></p>
+        <p className="text-xs text-muted-foreground">The link expires in 24 hours.</p>
         <Button variant="outline" onClick={handleResend} disabled={resending}>
-          {resending ? 'Resending…' : 'Resend verification email'}
+          {resending ? 'Resendingâ€¦' : 'Resend verification email'}
         </Button>
       </div>
     );
@@ -122,14 +122,14 @@ export function VisitorRegisterForm() {
         )}
       </div>
 
-      <p className="text-xs text-gray-500">Your account includes a 1-week free trial.</p>
+      <p className="text-xs text-muted-foreground">Your account includes a 1-week free trial.</p>
 
       <Button
         type="submit"
-        className="w-full bg-indigo-600 hover:bg-indigo-700"
+        className="w-full bg-primary hover:bg-primary/90"
         disabled={form.formState.isSubmitting}
       >
-        {form.formState.isSubmitting ? 'Creating account…' : 'Create Account'}
+        {form.formState.isSubmitting ? 'Creating accountâ€¦' : 'Create Account'}
       </Button>
     </form>
   );

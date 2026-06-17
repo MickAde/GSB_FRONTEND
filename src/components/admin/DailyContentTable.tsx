@@ -66,8 +66,8 @@ export function DailyContentTable({ items, onEdit }: Props) {
                     {item.content_type.replace('_', ' ')}
                   </Badge>
                 </TableCell>
-                <TableCell className="max-w-[300px] truncate text-sm text-gray-700">{item.body}</TableCell>
-                <TableCell className="text-sm text-gray-500">{item.author}</TableCell>
+                <TableCell className="max-w-[300px] truncate text-sm text-foreground/80">{item.body}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{item.author}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
                     <Button variant="ghost" size="icon" onClick={() => onEdit(item)}>

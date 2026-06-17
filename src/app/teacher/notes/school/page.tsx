@@ -12,8 +12,8 @@ import { useSchoolNotes } from '@/hooks/useNotes';
 import { formatDate } from '@/lib/utils';
 import type { NoteStatus } from '@/types';
 
-const STATUS_OPTIONS: { value: NoteStatus | ''; label: string }[] = [
-  { value: '',                       label: 'All Statuses' },
+const STATUS_OPTIONS: { value: NoteStatus | 'ALL'; label: string }[] = [
+  { value: 'ALL',                    label: 'All Statuses' },
   { value: 'PENDING_OCR',            label: 'Pending OCR' },
   { value: 'AWAITING_STUDENT_APPROVAL', label: 'Awaiting Review' },
   { value: 'PROCESSING_AI',          label: 'Processing AI' },
@@ -23,10 +23,10 @@ const STATUS_OPTIONS: { value: NoteStatus | ''; label: string }[] = [
 
 export default function SchoolNotesPage() {
   const [search, setSearch]         = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
   const { data, isLoading } = useSchoolNotes(
-    statusFilter ? { status: statusFilter as NoteStatus } : undefined
+    statusFilter !== 'ALL' ? { status: statusFilter as NoteStatus } : undefined
   );
 
   const notes = data?.results ?? [];
@@ -68,7 +68,7 @@ export default function SchoolNotesPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed py-16 text-center text-gray-400">
+        <div className="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
           No notes found.
         </div>
       ) : (
@@ -77,8 +77,8 @@ export default function SchoolNotesPage() {
             <Card key={note.id} className="overflow-hidden hover:shadow-sm transition-shadow">
               <CardContent className="flex items-center gap-4 p-4">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-gray-900">{note.file_name}</p>
-                  <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-400">
+                  <p className="truncate font-medium text-foreground">{note.file_name}</p>
+                  <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
                     <span>by {note.owner_name}</span>
                     {note.subject && <span>· {note.subject}</span>}
                     {note.topic   && <span>· {note.topic}</span>}

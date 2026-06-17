@@ -1,0 +1,13 @@
+
+> gsb-frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.24.0.1:3000
+- Environments: .env.local
+✓ Ready in 1421ms
+
+ GET /login 200 in 3.9s (next.js: 1853ms, proxy.ts: 396ms, application-code: 1680ms)
+ GET /student/notes/07c5f150-6470-4d8e-99a4-41c8bbbe678d 200 in 2.4s (next.js: 1890ms, proxy.ts: 87ms, application-code: 408ms)
+ GET / 200 in 207ms (next.js: 123ms, proxy.ts: 16ms, application-code: 67ms)

@@ -3,12 +3,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard, FileText, User, BookOpen, LogOut, Menu,
+  LayoutDashboard, FileText, User, BookOpen, LogOut, Menu, Brain, BarChart2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAuthStore } from '@/stores/authStore';
 import { logout as logoutApi } from '@/lib/api/auth';
@@ -30,7 +31,7 @@ const ROLE_BADGE_COLORS: Record<string, string> = {
 
 // ── Shared sidebar shell ──────────────────────────────────────────────────────
 
-export interface SidebarLink { href: string; icon: React.ElementType; label: string }
+export interface SidebarLink { href: string; icon: React.ElementType; label: string; mobileLabel?: string }
 
 function UserSection() {
   const { data: user } = useCurrentUser();
@@ -40,7 +41,7 @@ function UserSection() {
 
   const initials = `${user.first_name?.[0] ?? ''}${user.last_name?.[0] ?? ''}`.toUpperCase() || 'U';
   const fullName = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || user.username;
-  const roleBadge = ROLE_BADGE_COLORS[role ?? ''] ?? 'bg-gray-100 text-gray-700';
+  const roleBadge = ROLE_BADGE_COLORS[role ?? ''] ?? 'bg-muted text-muted-foreground';
   const roleLabel = ROLE_LABELS[role ?? ''] ?? role ?? '';
 
   return (
@@ -168,17 +169,27 @@ function SidebarShell({
       {/* Nav links */}
       <NavItems links={links} pathname={pathname} onNavigate={onNavigate} />
 
+      {/* Theme toggle */}
+      <div className="px-4 pb-2">
+        <ThemeToggle />
+      </div>
+
       {/* Logout */}
       <LogoutButton />
     </div>
   );
 }
 
-// ── Self-contained sidebar with mobile Sheet ──────────────────────────────────
+// ── Self-contained sidebar with mobile bottom nav ────────────────────────────
+
+const BOTTOM_NAV_MAX = 5;
 
 export function Sidebar({ links }: { links: SidebarLink[] }) {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  const needsMore = links.length > BOTTOM_NAV_MAX;
+  const bottomLinks = needsMore ? links.slice(0, BOTTOM_NAV_MAX - 1) : links;
 
   return (
     <>
@@ -187,22 +198,46 @@ export function Sidebar({ links }: { links: SidebarLink[] }) {
         <SidebarShell links={links} pathname={pathname} />
       </aside>
 
-      {/* Mobile hamburger */}
-      <button
-        className="lg:hidden fixed top-4 left-4 z-40 flex items-center justify-center w-10 h-10 rounded-xl bg-background/80 backdrop-blur-md border border-border/60 shadow-sm"
-        onClick={() => setMobileOpen(true)}
-        aria-label="Open menu"
-      >
-        <Menu className="w-5 h-5 text-foreground" />
-      </button>
+      {/* Mobile bottom nav */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md">
+        <div className="flex items-stretch justify-around">
+          {bottomLinks.map(({ href, icon: Icon, label, mobileLabel }) => {
+            const active = pathname === href || pathname.startsWith(href + '/');
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  'flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors',
+                  active ? 'text-primary' : 'text-muted-foreground'
+                )}
+              >
+                <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-primary' : 'text-muted-foreground/60')} />
+                <span className="max-w-[52px] truncate text-center leading-tight">
+                  {mobileLabel ?? label}
+                </span>
+              </Link>
+            );
+          })}
+          {needsMore && (
+            <button
+              onClick={() => setMoreOpen(true)}
+              className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium text-muted-foreground"
+            >
+              <Menu className="h-5 w-5 opacity-60" />
+              <span>More</span>
+            </button>
+          )}
+        </div>
+      </nav>
 
-      {/* Mobile Sheet */}
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+      {/* Sheet — used only when "More" is tapped on wide-link roles */}
+      <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
         <SheetContent side="left" className="p-0 w-64 border-r-0">
           <SidebarShell
             links={links}
             pathname={pathname}
-            onNavigate={() => setMobileOpen(false)}
+            onNavigate={() => setMoreOpen(false)}
           />
         </SheetContent>
       </Sheet>
@@ -213,9 +248,11 @@ export function Sidebar({ links }: { links: SidebarLink[] }) {
 // ── Role-specific exports ─────────────────────────────────────────────────────
 
 const studentLinks: SidebarLink[] = [
-  { href: '/student/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/student/notes',     icon: FileText,        label: 'My Notes'  },
-  { href: '/student/profile',   icon: User,            label: 'Profile'   },
+  { href: '/student/dashboard',   icon: LayoutDashboard, label: 'Dashboard',   },
+  { href: '/student/notes',       icon: FileText,        label: 'My Notes',    mobileLabel: 'Notes'   },
+  { href: '/student/quiz',        icon: Brain,           label: 'Quiz',        },
+  { href: '/student/performance', icon: BarChart2,       label: 'Performance', mobileLabel: 'Stats'   },
+  { href: '/student/profile',     icon: User,            label: 'Profile',     },
 ];
 
 export function StudentSidebar() {

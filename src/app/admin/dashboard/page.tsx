@@ -19,10 +19,10 @@ export default function AdminDashboardPage() {
   const { data: subAdmins }   = useQuery({ queryKey: queryKeys.adminUsers.all({ role: 'SUB_ADMIN' }),    queryFn: () => getUsers({ role: 'SUB_ADMIN' })      });
 
   const statCards = [
-    { label: 'Total Users',  value: allUsers?.length  ?? '—', icon: Users,          bg: 'from-primary/5 to-white',    ring: 'text-primary'      },
-    { label: 'Students',     value: students?.length  ?? '—', icon: GraduationCap,  bg: 'from-emerald-50 to-white',   ring: 'text-emerald-600'  },
-    { label: 'Teachers',     value: teachers?.length  ?? '—', icon: BookOpen,       bg: 'from-blue-50 to-white',      ring: 'text-blue-600'     },
-    { label: 'Sub-Admins',   value: subAdmins?.length ?? '—', icon: Settings,       bg: 'from-amber-50 to-white',     ring: 'text-amber-600'    },
+    { label: 'Total Users',  value: allUsers?.count  ?? '—', icon: Users,          bg: 'from-primary/5 to-white',    ring: 'text-primary'      },
+    { label: 'Students',     value: students?.count  ?? '—', icon: GraduationCap,  bg: 'from-emerald-50 to-white',   ring: 'text-emerald-600'  },
+    { label: 'Teachers',     value: teachers?.count  ?? '—', icon: BookOpen,       bg: 'from-blue-50 to-white',      ring: 'text-blue-600'     },
+    { label: 'Sub-Admins',   value: subAdmins?.count ?? '—', icon: Settings,       bg: 'from-amber-50 to-white',     ring: 'text-amber-600'    },
   ];
 
   const quickLinks = [

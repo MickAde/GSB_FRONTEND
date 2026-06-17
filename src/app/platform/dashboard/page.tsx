@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -21,19 +21,19 @@ export default function PlatformDashboardPage() {
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardContent className="flex flex-col items-center justify-center p-8">
-            <span className="text-3xl font-bold text-indigo-600">{total}</span>
-            <span className="text-sm text-gray-500">Total Schools</span>
+            <span className="text-3xl font-bold text-primary">{total}</span>
+            <span className="text-sm text-muted-foreground">Total Schools</span>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="flex flex-col items-center justify-center p-8">
             <span className="text-3xl font-bold text-green-600">{active}</span>
-            <span className="text-sm text-gray-500">Active Schools</span>
+            <span className="text-sm text-muted-foreground">Active Schools</span>
           </CardContent>
         </Card>
       </div>
       <Link href="/platform/schools">
-        <Button className="bg-indigo-600 hover:bg-indigo-700">Manage Schools</Button>
+        <Button className="bg-primary hover:bg-primary/90">Manage Schools</Button>
       </Link>
     </div>
   );

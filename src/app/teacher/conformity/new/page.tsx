@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -60,14 +60,14 @@ export default function NewConformityPage() {
         {[1, 2].map((s) => (
           <div key={s} className="flex items-center gap-2">
             <div className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold
-              ${step >= s ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}
+              ${step >= s ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
             >
               {s}
             </div>
-            <span className={`text-sm ${step >= s ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+            <span className={`text-sm ${step >= s ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
               {s === 1 ? 'Select your note' : 'Select student note'}
             </span>
-            {s < 2 && <div className="mx-1 h-px w-8 bg-gray-200" />}
+            {s < 2 && <div className="mx-1 h-px w-8 bg-border" />}
           </div>
         ))}
       </div>
@@ -89,12 +89,12 @@ export default function NewConformityPage() {
                     onValueChange={(v) => form.setValue('teacher_note_id', v, { shouldValidate: true })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a note…" />
+                      <SelectValue placeholder="Choose a noteâ€¦" />
                     </SelectTrigger>
                     <SelectContent>
                       {myReadyNotes.map((n) => (
                         <SelectItem key={n.id} value={n.id}>
-                          {n.file_name}{n.subject ? ` · ${n.subject}` : ''}
+                          {n.file_name}{n.subject ? ` Â· ${n.subject}` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -108,11 +108,11 @@ export default function NewConformityPage() {
                 <Button variant="outline" type="button" onClick={() => router.back()}>Cancel</Button>
                 <Button
                   type="button"
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-primary hover:bg-primary/90"
                   disabled={!selectedTeacherNote}
                   onClick={() => setStep(2)}
                 >
-                  Next →
+                  Next â†’
                 </Button>
               </div>
             </CardContent>
@@ -135,12 +135,12 @@ export default function NewConformityPage() {
                     onValueChange={(v) => form.setValue('student_note_id', v, { shouldValidate: true })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a student note…" />
+                      <SelectValue placeholder="Choose a student noteâ€¦" />
                     </SelectTrigger>
                     <SelectContent>
                       {studentReadyNotes.map((n) => (
                         <SelectItem key={n.id} value={n.id}>
-                          {n.owner_name} — {n.file_name}{n.subject ? ` · ${n.subject}` : ''}
+                          {n.owner_name} â€” {n.file_name}{n.subject ? ` Â· ${n.subject}` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -151,13 +151,13 @@ export default function NewConformityPage() {
                 </>
               )}
               <div className="flex justify-between gap-2">
-                <Button variant="outline" type="button" onClick={() => setStep(1)}>← Back</Button>
+                <Button variant="outline" type="button" onClick={() => setStep(1)}>â† Back</Button>
                 <Button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-primary hover:bg-primary/90"
                   disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? 'Creating…' : 'Create Report →'}
+                  {form.formState.isSubmitting ? 'Creatingâ€¦' : 'Create Report â†’'}
                 </Button>
               </div>
             </CardContent>

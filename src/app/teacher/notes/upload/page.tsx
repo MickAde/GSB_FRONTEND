@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -65,8 +65,8 @@ export default function TeacherNoteUploadPage() {
           <NoteUploadDropzone onFile={setFile} file={file} onClear={() => setFile(null)} disabled={uploading} />
           {uploading && (
             <div className="space-y-1">
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Uploading…</span><span>{progress}%</span>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Uploadingâ€¦</span><span>{progress}%</span>
               </div>
               <Progress value={progress} className="h-2" />
             </div>
@@ -88,8 +88,8 @@ export default function TeacherNoteUploadPage() {
             </div>
             <div className="flex gap-3">
               <Button variant="outline" type="button" onClick={() => router.back()} disabled={uploading}>Cancel</Button>
-              <Button type="submit" className="flex-1 bg-indigo-600 hover:bg-indigo-700" disabled={!file || uploading}>
-                {uploading ? `Uploading ${progress}%…` : 'Upload Note →'}
+              <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={!file || uploading}>
+                {uploading ? `Uploading ${progress}%â€¦` : 'Upload Note â†’'}
               </Button>
             </div>
           </form>

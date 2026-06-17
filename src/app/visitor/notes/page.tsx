@@ -1,8 +1,5 @@
-'use client';
-import Link from 'next/link';
+﻿'use client';
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PageHeader } from '@/components/common/PageHeader';
 import { NoteCard } from '@/components/notes/NoteCard';
@@ -29,22 +26,15 @@ export default function VisitorNotesPage() {
       <PageHeader
         title="My Notes"
         description={`${data?.count ?? 0} total notes`}
-        actions={
-          <Link href="/visitor/notes/upload">
-            <Button className="bg-indigo-600 hover:bg-indigo-700">
-              <Plus className="mr-2 h-4 w-4" /> Upload Note
-            </Button>
-          </Link>
-        }
       />
       <Input
-        placeholder="Search by filename or subject…"
+        placeholder="Search by filename or subjectâ€¦"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="max-w-sm"
       />
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed py-16 text-center text-gray-400">
+        <div className="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
           <p className="font-medium">No notes yet</p>
           <p className="mt-1 text-sm">Upload your first note to try AI summarisation.</p>
         </div>

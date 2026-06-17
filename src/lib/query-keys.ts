@@ -30,4 +30,17 @@ export const queryKeys = {
   adminCulture:    () => ['admin', 'culture'] as const,
   adminDailyContent: (filters?: object) => ['admin', 'daily-content', filters] as const,
   platformSchools: () => ['platform', 'schools'] as const,
+  quiz: {
+    all:             (filters?: object) => ['quiz', filters] as const,
+    detail:          (id: string)       => ['quiz', id] as const,
+    status:          (id: string)       => ['quiz', id, 'status'] as const,
+    attempt:         (id: string)       => ['quiz', id, 'attempt'] as const,
+    performance:     ()                 => ['quiz', 'performance'] as const,
+    teacherStudents: ()                 => ['quiz', 'teacher', 'students'] as const,
+  },
+  lessonPlans: {
+    all:    (filters?: object) => ['lesson-plans', filters] as const,
+    detail: (id: string)       => ['lesson-plans', id] as const,
+    admin:  (filters?: object) => ['admin', 'lesson-plans', filters] as const,
+  },
 };

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
@@ -92,7 +92,7 @@ export function BulkImportTable() {
   if (step === 'results' && result) {
     return (
       <div className="space-y-4">
-        <div className="rounded-xl border bg-gray-50 p-4 text-center">
+        <div className="rounded-xl border bg-muted/50 p-4 text-center">
           <p className="text-lg font-semibold">
             <span className="text-green-600">{result.created.length} imported</span>
             {result.failed.length > 0 && (
@@ -115,13 +115,13 @@ export function BulkImportTable() {
                 <TableCell><CheckCircle2 className="h-4 w-4 text-green-500" /></TableCell>
                 <TableCell>{u.first_name} {u.last_name}</TableCell>
                 <TableCell>{u.username}</TableCell>
-                <TableCell>—</TableCell>
+                <TableCell>â€”</TableCell>
               </TableRow>
             ))}
             {result.failed.map((f, i) => (
               <TableRow key={i} className="bg-red-50">
                 <TableCell><XCircle className="h-4 w-4 text-red-500" /></TableCell>
-                <TableCell>—</TableCell>
+                <TableCell>â€”</TableCell>
                 <TableCell>{f.username}</TableCell>
                 <TableCell className="text-xs text-red-600">{f.error}</TableCell>
               </TableRow>
@@ -143,7 +143,7 @@ export function BulkImportTable() {
   if (step === 'preview') {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-gray-600">{rows.length} students ready to import.</p>
+        <p className="text-sm text-muted-foreground">{rows.length} students ready to import.</p>
         <div className="max-h-96 overflow-y-auto rounded-xl border">
           <Table>
             <TableHeader>
@@ -160,16 +160,16 @@ export function BulkImportTable() {
                   <TableCell>{row.first_name}</TableCell>
                   <TableCell>{row.last_name}</TableCell>
                   <TableCell>{row.username}</TableCell>
-                  <TableCell>{row.email ?? '—'}</TableCell>
+                  <TableCell>{row.email ?? 'â€”'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => setStep('input')}>← Back</Button>
-          <Button onClick={handleSubmit} disabled={loading} className="bg-indigo-600 hover:bg-indigo-700">
-            {loading ? 'Importing…' : `Import ${rows.length} Students`}
+          <Button variant="outline" onClick={() => setStep('input')}>â† Back</Button>
+          <Button onClick={handleSubmit} disabled={loading} className="bg-primary hover:bg-primary/90">
+            {loading ? 'Importingâ€¦' : `Import ${rows.length} Students`}
           </Button>
         </div>
       </div>
@@ -186,14 +186,14 @@ export function BulkImportTable() {
 
       <div
         {...getRootProps()}
-        className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-colors ${isDragActive ? 'border-indigo-400 bg-indigo-50' : 'border-gray-300 hover:border-indigo-300'}`}
+        className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}
       >
         <input {...getInputProps()} />
-        <Upload className="mb-2 h-8 w-8 text-gray-400" />
-        <p className="text-sm text-gray-600">Drop a CSV file here, or click to browse</p>
+        <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">Drop a CSV file here, or click to browse</p>
       </div>
 
-      <p className="text-center text-xs text-gray-400">or paste CSV text below</p>
+      <p className="text-center text-xs text-muted-foreground">or paste CSV text below</p>
 
       <Textarea
         value={csvText}
@@ -203,7 +203,7 @@ export function BulkImportTable() {
         className="font-mono text-xs"
       />
 
-      <Button onClick={handlePreview} disabled={!csvText.trim()} className="w-full bg-indigo-600 hover:bg-indigo-700">
+      <Button onClick={handlePreview} disabled={!csvText.trim()} className="w-full bg-primary hover:bg-primary/90">
         Preview Import
       </Button>
     </div>

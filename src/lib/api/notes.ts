@@ -23,7 +23,7 @@ export const uploadNote = (
 ): Promise<UploadResponse> =>
   apiClient
     .post<UploadResponse>('/notes/upload/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300_000, // 5 min — OCR on large scanned PDFs can take 30-60s in dev
       onUploadProgress: (evt) => {
         if (onProgress) {
           const pct = Math.round((evt.loaded * 100) / (evt.total ?? 1));
@@ -35,9 +35,7 @@ export const uploadNote = (
 
 export const bulkUploadNotes = (formData: FormData): Promise<BulkUploadResponse> =>
   apiClient
-    .post<BulkUploadResponse>('/notes/upload/bulk/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+    .post<BulkUploadResponse>('/notes/upload/bulk/', formData)
     .then((r) => r.data);
 
 export const getNotes = (filters?: NoteFilters): Promise<PaginatedResponse<NoteListItem>> =>
@@ -54,7 +52,7 @@ export const getNoteStatus = (id: string): Promise<NoteStatusPoll> =>
 
 export const confirmOCR = (id: string, confirmedText: string): Promise<ConfirmOCRResponse> =>
   apiClient
-    .post<ConfirmOCRResponse>(`/notes/${id}/confirm-ocr/`, { confirmed_text: confirmedText })
+    .post<ConfirmOCRResponse>(`/notes/${id}/confirm-ocr/`, { confirmed_text: confirmedText }, { timeout: 300_000 })
     .then((r) => r.data);
 
 export const replaceNote = (
@@ -64,7 +62,7 @@ export const replaceNote = (
 ): Promise<UploadResponse> =>
   apiClient
     .post<UploadResponse>(`/notes/${id}/replace/`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300_000,
       onUploadProgress: (evt) => {
         if (onProgress) {
           const pct = Math.round((evt.loaded * 100) / (evt.total ?? 1));
@@ -80,9 +78,9 @@ export const updateNoteMetadata = (id: string, payload: NoteMetadataPayload): Pr
 export const deleteNote = (id: string): Promise<void> =>
   apiClient.delete(`/notes/${id}/delete/`).then(() => undefined);
 
-export const getConformityReports = (filters?: object): Promise<ConformityReport[]> =>
+export const getConformityReports = (filters?: object): Promise<PaginatedResponse<ConformityReport>> =>
   apiClient
-    .get<ConformityReport[]>('/notes/conformity/', { params: filters })
+    .get<PaginatedResponse<ConformityReport>>('/notes/conformity/', { params: filters })
     .then((r) => r.data);
 
 export const createConformityReport = (

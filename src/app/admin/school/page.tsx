@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -83,7 +83,7 @@ export default function AdminSchoolPage() {
 
             <div className="space-y-1">
               <Label>Logo URL</Label>
-              <Input {...form.register('logo_url')} disabled={!editing} placeholder="https://…" />
+              <Input {...form.register('logo_url')} disabled={!editing} placeholder="https://â€¦" />
               {form.watch('logo_url') && (
                 <img src={form.watch('logo_url')} alt="Logo preview" className="mt-2 h-16 w-16 rounded-full object-cover" />
               )}
@@ -107,7 +107,7 @@ export default function AdminSchoolPage() {
             </div>
 
             {/* Read-only fields */}
-            <div className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500 space-y-1">
+            <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground space-y-1">
               <p><strong>Slug:</strong> {data?.slug}</p>
               <p><strong>Active:</strong> {data?.is_active ? 'Yes' : 'No'}</p>
               <p><strong>Onboarding Date:</strong> {data?.onboarding_date}</p>
@@ -119,8 +119,8 @@ export default function AdminSchoolPage() {
                 <Button variant="outline" type="button" onClick={() => { setEditing(false); form.reset(); }}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? 'Saving…' : 'Save Changes'}
+                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? 'Savingâ€¦' : 'Save Changes'}
                 </Button>
               </div>
             )}

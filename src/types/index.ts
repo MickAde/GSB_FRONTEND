@@ -1,3 +1,11 @@
+export interface PaginatedResponse<T> {
+  count:        number;
+  total_pages:  number;
+  next:         string | null;
+  previous:     string | null;
+  results:      T[];
+}
+
 export type UserRole =
   | 'STUDENT'
   | 'TEACHER'
@@ -25,14 +33,6 @@ export interface JWTPayload {
   exp:       number;
   iat:       number;
   is_staff?: boolean;
-}
-
-export interface PaginatedResponse<T> {
-  count:       number;
-  next:        string | null;
-  previous:    string | null;
-  total_pages: number;
-  results:     T[];
 }
 
 export interface APIError {
@@ -63,14 +63,14 @@ export interface SchoolAdmin extends SchoolDetail {
 }
 
 export interface SchoolCulture {
-  philosophy:                string;
-  mission_statement:         string;
-  vision_statement:          string;
-  core_values:               string;
-  school_creed:              string;
-  institutional_principles:  string;
-  founder_quotes:            Array<{ quote: string; author: string }>;
-  updated_at:                string;
+  philosophy:               string;
+  mission_statement:        string;
+  vision_statement:         string;
+  core_values:              string;
+  school_creed:             string;
+  institutional_principles: string;
+  founder_quotes:           Array<{ quote: string; author: string }>;
+  updated_at:               string;
 }
 
 export interface TokenPair {
@@ -331,4 +331,178 @@ export interface CreateSchoolPayload {
   address?:       string;
   contact_email?: string;
   contact_phone?: string;
+}
+
+// ── Quiz types ────────────────────────────────────────────────
+
+export type QuizStatus     = 'GENERATING' | 'READY' | 'FAILED';
+export type QuizDifficulty = 'easy' | 'moderate' | 'difficult';
+export type QuestionType   = 'MCQ' | 'TF';
+
+export interface QuizListItem {
+  id:            string;
+  title:         string;
+  difficulty:    QuizDifficulty;
+  num_questions: number;
+  status:        QuizStatus;
+  subject:       string;
+  note_name:     string;
+  attempt_count: number;
+  created_at:    string;
+}
+
+export interface QuizQuestion {
+  id:            string;
+  order:         number;
+  question_type: QuestionType;
+  question_text: string;
+  option_a:      string;
+  option_b:      string;
+  option_c:      string;
+  option_d:      string;
+  correct?:      string;       // only present after submitting an attempt
+  explanation?:  string;       // only present after submitting an attempt
+}
+
+export interface QuizDetail extends QuizListItem {
+  error_message: string;
+  questions:     QuizQuestion[];
+}
+
+export interface QuizStatusPoll {
+  id:             string;
+  status:         QuizStatus;
+  error_message:  string;
+  question_count: number;
+}
+
+export interface AttemptAnswer {
+  question:   QuizQuestion;
+  chosen:     string;
+  is_correct: boolean;
+}
+
+export interface QuizAttemptResult {
+  id:              string;
+  quiz_title:      string;
+  quiz_difficulty: QuizDifficulty;
+  score:           number;
+  total:           number;
+  percentage:      string;
+  time_taken_s:    number | null;
+  completed_at:    string;
+  answers:         AttemptAnswer[];
+}
+
+export interface SubjectPerformance {
+  subject:  string;
+  attempts: number;
+  average:  number;
+}
+
+export interface DifficultyStats {
+  attempts: number;
+  average:  number;
+}
+
+export interface RecentAttempt {
+  id:           string;
+  quiz_title:   string;
+  difficulty:   QuizDifficulty;
+  score:        number;
+  total:        number;
+  percentage:   number;
+  completed_at: string;
+}
+
+export interface PerformanceStats {
+  total_attempts:       number;
+  overall_average:      number;
+  readiness_score:      number;
+  study_streak:         number;
+  subjects:             SubjectPerformance[];
+  difficulty_breakdown: Record<QuizDifficulty, DifficultyStats>;
+  recent_attempts:      RecentAttempt[];
+}
+
+export interface StudentPerformanceSummary {
+  id:             string;
+  full_name:      string;
+  username:       string;
+  total_attempts: number;
+  average_score:  number;
+  last_active:    string | null;
+}
+
+export interface CreateQuizPayload {
+  note_id:       string;
+  difficulty:    QuizDifficulty;
+  num_questions: number;
+}
+
+export interface SubmitAttemptPayload {
+  answers:      Array<{ question_id: string; chosen: string }>;
+  time_taken_s?: number;
+}
+
+// ── Lesson Plan types ─────────────────────────────────────────
+
+export type LessonPlanStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'REVISION_NEEDED'
+  | 'APPROVED';
+
+export interface LessonPlanListItem {
+  id:           string;
+  title:        string;
+  subject:      string;
+  topic:        string;
+  status:       LessonPlanStatus;
+  teacher_name: string;
+  created_at:   string;
+  updated_at:   string;
+}
+
+export interface LessonPlanComment {
+  id:          string;
+  author_name: string;
+  body:        string;
+  created_at:  string;
+}
+
+export interface LessonPlanDetail extends LessonPlanListItem {
+  teacher_name:     string;
+  subtopic:         string;
+  duration_minutes: number | null;
+  objective:        string;
+  materials_needed: string;
+  introduction:     string;
+  main_content:     string;
+  activities:       string;
+  assessment:       string;
+  homework:         string;
+  ai_suggestions:   string;
+  comments:         LessonPlanComment[];
+}
+
+export interface LessonPlanPayload {
+  title:            string;
+  subject?:         string;
+  topic?:           string;
+  subtopic?:        string;
+  duration_minutes?: number | null;
+  objective?:       string;
+  materials_needed?: string;
+  introduction?:    string;
+  main_content?:    string;
+  activities?:      string;
+  assessment?:      string;
+  homework?:        string;
+}
+
+export interface AdminReviewPayload {
+  action:   'approve' | 'request_revision';
+  comment?: string;
 }

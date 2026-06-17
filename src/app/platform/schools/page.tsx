@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -99,7 +99,7 @@ export default function PlatformSchoolsPage() {
       <PageHeader
         title="Platform Schools"
         actions={
-          <Button onClick={openCreate} className="bg-indigo-600 hover:bg-indigo-700">
+          <Button onClick={openCreate} className="bg-primary hover:bg-primary/90">
             <Plus className="mr-2 h-4 w-4" /> Onboard School
           </Button>
         }
@@ -183,8 +183,8 @@ export default function PlatformSchoolsPage() {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Saving…' : editSchool ? 'Save Changes' : 'Onboard School'}
+              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Savingâ€¦' : editSchool ? 'Save Changes' : 'Onboard School'}
               </Button>
             </div>
           </form>

@@ -15,6 +15,11 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (access) {
     config.headers.Authorization = `Bearer ${access}`;
   }
+  // Let the browser set Content-Type (with boundary) for multipart requests.
+  // The global 'application/json' default would break FormData uploads otherwise.
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
   return config;
 });
 
