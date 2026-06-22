@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
-    "gen:api": "openapi-typescript http://localhost:8000/api/schema/ -o src/types/api.ts"
+    "gen:api": "openapi-typescript http://localhost:8000/api/schema/ -o src/types/api.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
