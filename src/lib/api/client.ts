@@ -2,7 +2,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { getTokens, setAccessToken, clearTokens } from '@/lib/token';
 import { useAuthStore } from '@/stores/authStore';
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000') + '/api/v1';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://gsbproject.pythonanywhere.com') + '/api/v1';
 
 export const apiClient = axios.create({
   baseURL: API_BASE,
