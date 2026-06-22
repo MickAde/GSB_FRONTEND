@@ -506,3 +506,37 @@ export interface AdminReviewPayload {
   action:   'approve' | 'request_revision';
   comment?: string;
 }
+
+// ── Quiz settings types ───────────────────────────────────────
+
+export interface StudentQuizPreferences {
+  id:            string;
+  num_questions: number;
+  difficulty:    QuizDifficulty;
+  updated_at:    string;
+}
+
+export interface TeacherSubjectThreshold {
+  id:             string;
+  subject:        string;
+  min_questions:  number;
+  min_difficulty: QuizDifficulty;
+  updated_at:     string;
+}
+
+export interface SubjectLimits {
+  subject:        string;
+  min_questions:  number;
+  min_difficulty: QuizDifficulty;
+}
+
+export interface TeacherThresholdPayload {
+  subject:        string;
+  min_questions:  number;
+  min_difficulty: QuizDifficulty;
+}
+
+export interface StudentPreferencesPayload {
+  num_questions?: number;
+  difficulty?:    QuizDifficulty;
+}

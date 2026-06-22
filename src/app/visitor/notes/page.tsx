@@ -1,6 +1,9 @@
 ﻿'use client';
 import { useState } from 'react';
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/common/PageHeader';
 import { NoteCard } from '@/components/notes/NoteCard';
 import { LoadingPage } from '@/components/common/LoadingSpinner';
@@ -23,10 +26,17 @@ export default function VisitorNotesPage() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <PageHeader
-        title="My Notes"
-        description={`${data?.count ?? 0} total notes`}
-      />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader
+          title="My Notes"
+          description={`${data?.count ?? 0} total notes`}
+        />
+        <Link href="/visitor/notes/upload">
+          <Button className="shrink-0 gradient-primary text-white rounded-xl shadow-md shadow-primary/20">
+            <Plus className="mr-2 h-4 w-4" /> Upload Note
+          </Button>
+        </Link>
+      </div>
       <Input
         placeholder="Search by filename or subjectâ€¦"
         value={search}

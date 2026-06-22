@@ -7,7 +7,12 @@ import type {
   QuizListItem,
   QuizStatusPoll,
   StudentPerformanceSummary,
+  StudentQuizPreferences,
+  StudentPreferencesPayload,
+  SubjectLimits,
   SubmitAttemptPayload,
+  TeacherSubjectThreshold,
+  TeacherThresholdPayload,
 } from '@/types';
 
 export const createQuiz = (payload: CreateQuizPayload): Promise<{ quiz_id: string; status: string }> =>
@@ -33,3 +38,28 @@ export const getPerformanceStats = (): Promise<PerformanceStats> =>
 
 export const getTeacherStudentStats = (): Promise<StudentPerformanceSummary[]> =>
   apiClient.get<StudentPerformanceSummary[]>('/quiz/teacher/students/').then((r) => r.data);
+
+// ── Quiz settings ─────────────────────────────────────────────
+
+export const getQuizPreferences = (): Promise<StudentQuizPreferences> =>
+  apiClient.get<StudentQuizPreferences>('/quiz/preferences/').then((r) => r.data);
+
+export const updateQuizPreferences = (payload: StudentPreferencesPayload): Promise<StudentQuizPreferences> =>
+  apiClient.patch<StudentQuizPreferences>('/quiz/preferences/', payload).then((r) => r.data);
+
+export const getSubjectLimits = (subject?: string): Promise<SubjectLimits | SubjectLimits[]> =>
+  apiClient
+    .get<SubjectLimits | SubjectLimits[]>('/quiz/subject-limits/', { params: subject ? { subject } : undefined })
+    .then((r) => r.data);
+
+export const getTeacherThresholds = (): Promise<TeacherSubjectThreshold[]> =>
+  apiClient.get<TeacherSubjectThreshold[]>('/quiz/teacher/thresholds/').then((r) => r.data);
+
+export const upsertTeacherThreshold = (payload: TeacherThresholdPayload): Promise<TeacherSubjectThreshold> =>
+  apiClient.post<TeacherSubjectThreshold>('/quiz/teacher/thresholds/', payload).then((r) => r.data);
+
+export const updateTeacherThreshold = (id: string, payload: Partial<TeacherThresholdPayload>): Promise<TeacherSubjectThreshold> =>
+  apiClient.patch<TeacherSubjectThreshold>(`/quiz/teacher/thresholds/${id}/`, payload).then((r) => r.data);
+
+export const deleteTeacherThreshold = (id: string): Promise<void> =>
+  apiClient.delete(`/quiz/teacher/thresholds/${id}/`).then(() => undefined);

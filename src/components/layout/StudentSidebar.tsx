@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard, FileText, User, BookOpen, LogOut, Menu, Brain, BarChart2,
+  LayoutDashboard, FileText, User, BookOpen, LogOut, Menu, Brain, BarChart2, Settings,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -253,6 +253,7 @@ const studentLinks: SidebarLink[] = [
   { href: '/student/quiz',        icon: Brain,           label: 'Quiz',        },
   { href: '/student/performance', icon: BarChart2,       label: 'Performance', mobileLabel: 'Stats'   },
   { href: '/student/profile',     icon: User,            label: 'Profile',     },
+  { href: '/student/settings',    icon: Settings,        label: 'Settings',    },
 ];
 
 export function StudentSidebar() {
