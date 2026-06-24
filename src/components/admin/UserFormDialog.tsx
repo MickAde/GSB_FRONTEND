@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -14,17 +14,18 @@ import { Label } from '@/components/ui/label';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { createUser, updateUser } from '@/lib/api/admin';
+import { createUser, updateUser, getClasses } from '@/lib/api/admin';
 import { queryKeys } from '@/lib/query-keys';
 import type { UserListItem, UserRole } from '@/types';
 
 const schema = z.object({
-  role:       z.string().min(1),
-  first_name: z.string().min(1, 'Required'),
-  last_name:  z.string().min(1, 'Required'),
-  email:      z.string().optional(),
-  username:   z.string().optional(),
-  password:   z.string().optional(),
+  role:             z.string().min(1),
+  first_name:       z.string().min(1, 'Required'),
+  last_name:        z.string().min(1, 'Required'),
+  email:            z.string().optional(),
+  username:         z.string().optional(),
+  password:         z.string().optional(),
+  student_class_id: z.string().optional().nullable(),
 });
 type Fields = z.infer<typeof schema>;
 
@@ -40,36 +41,48 @@ export function UserFormDialog({ open, onOpenChange, editUser, currentRole }: Pr
   const form = useForm<Fields>({ resolver: zodResolver(schema) });
   const role = form.watch('role');
 
+  const { data: classes = [] } = useQuery({
+    queryKey: queryKeys.adminClasses(),
+    queryFn:  getClasses,
+    enabled:  open,
+    staleTime: 60_000,
+  });
+
   useEffect(() => {
     if (editUser) {
       form.reset({
-        role:       editUser.role,
-        first_name: editUser.first_name,
-        last_name:  editUser.last_name,
-        email:      editUser.email ?? '',
-        username:   editUser.username ?? '',
+        role:             editUser.role,
+        first_name:       editUser.first_name,
+        last_name:        editUser.last_name,
+        email:            editUser.email    ?? '',
+        username:         editUser.username ?? '',
+        student_class_id: editUser.student_class_id ?? '',
       });
     } else {
-      form.reset({ role: 'STUDENT' });
+      form.reset({ role: 'STUDENT', student_class_id: '' });
     }
   }, [editUser, form, open]);
 
   const onSubmit = async (data: Fields) => {
     try {
+      const classId = data.student_class_id || null;
+
       if (editUser) {
         await updateUser(editUser.id, {
-          first_name: data.first_name,
-          last_name:  data.last_name,
+          first_name:        data.first_name,
+          last_name:         data.last_name,
+          student_class_id:  classId,
         });
         toast.success('User updated');
       } else {
         await createUser({
-          role:       data.role as 'STUDENT' | 'TEACHER' | 'SUB_ADMIN',
-          first_name: data.first_name,
-          last_name:  data.last_name,
-          password:   data.password ?? '',
-          email:      data.email || undefined,
-          username:   data.username || undefined,
+          role:             data.role as 'STUDENT' | 'TEACHER' | 'SUB_ADMIN',
+          first_name:       data.first_name,
+          last_name:        data.last_name,
+          password:         data.password ?? '',
+          email:            data.email    || undefined,
+          username:         data.username || undefined,
+          student_class_id: classId,
         });
         toast.success('User created');
       }
@@ -85,7 +98,7 @@ export function UserFormDialog({ open, onOpenChange, editUser, currentRole }: Pr
   };
 
   const isStudent = role === 'STUDENT';
-  const isAdmin   = role === 'SUB_ADMIN';
+  const showClass = role === 'STUDENT' || role === 'TEACHER';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -150,6 +163,43 @@ export function UserFormDialog({ open, onOpenChange, editUser, currentRole }: Pr
             </div>
           )}
 
+          {/* Class selector — for students and teachers */}
+          {showClass && (
+            <div className="space-y-1">
+              <Label>
+                Class{' '}
+                <span className="font-normal text-muted-foreground">
+                  {isStudent ? '(required)' : '(optional — assigns as class teacher)'}
+                </span>
+              </Label>
+              {classes.length === 0 ? (
+                <p className="text-xs text-amber-600">
+                  No classes yet. Go to <strong>Classes</strong> to add them first.
+                </p>
+              ) : (
+                <Select
+                  value={form.watch('student_class_id') ?? ''}
+                  onValueChange={(v) => form.setValue('student_class_id', v === '__none__' ? '' : v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a class…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">— No class —</SelectItem>
+                    {classes.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              {form.formState.errors.student_class_id && (
+                <p className="text-xs text-red-500">{form.formState.errors.student_class_id.message}</p>
+              )}
+            </div>
+          )}
+
           {!editUser && (
             <div className="space-y-1">
               <Label>Password</Label>
@@ -165,7 +215,7 @@ export function UserFormDialog({ open, onOpenChange, editUser, currentRole }: Pr
               Cancel
             </Button>
             <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Savingâ€¦' : editUser ? 'Save Changes' : 'Create User'}
+              {form.formState.isSubmitting ? 'Saving…' : editUser ? 'Save Changes' : 'Create User'}
             </Button>
           </div>
         </form>

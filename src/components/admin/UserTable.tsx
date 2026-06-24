@@ -71,6 +71,7 @@ export function UserTable({ users, currentRole, onEdit, onSetPassword, onView }:
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Class</TableHead>
               <TableHead>Email / Username</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Joined</TableHead>
@@ -87,6 +88,9 @@ export function UserTable({ users, currentRole, onEdit, onSetPassword, onView }:
                   <Badge className={`border-0 text-xs ${roleColors[user.role] ?? ''}`}>
                     {user.role.replace('_', ' ')}
                   </Badge>
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {user.student_class_name ?? <span className="text-muted-foreground/50">—</span>}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {user.email ?? user.username ?? '—'}

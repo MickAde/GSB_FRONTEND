@@ -79,19 +79,21 @@ export interface TokenPair {
 }
 
 export interface UserProfile {
-  id:                string;
-  email:             string | null;
-  username:          string | null;
-  role:              UserRole;
-  school:            string | null;
-  first_name:        string;
-  last_name:         string;
-  full_name:         string;
-  avatar_url:        string | null;
-  school_name:       string | null;
-  is_email_verified: boolean;
-  trial_expires_at:  string | null;
-  date_joined:       string;
+  id:                  string;
+  email:               string | null;
+  username:            string | null;
+  role:                UserRole;
+  school:              string | null;
+  first_name:          string;
+  last_name:           string;
+  full_name:           string;
+  avatar_url:          string | null;
+  school_name:         string | null;
+  student_class_id:    string | null;
+  student_class_name:  string | null;
+  is_email_verified:   boolean;
+  trial_expires_at:    string | null;
+  date_joined:         string;
 }
 
 export interface DailyContent {
@@ -102,15 +104,23 @@ export interface DailyContent {
   display_date: string;
 }
 
+export interface SchoolClass {
+  id:           string;
+  name:         string;
+  member_count: number;
+}
+
 export interface UserListItem {
-  id:          string;
-  role:        UserRole;
-  first_name:  string;
-  last_name:   string;
-  email:       string | null;
-  username:    string | null;
-  is_active:   boolean;
-  date_joined: string;
+  id:                 string;
+  role:               UserRole;
+  first_name:         string;
+  last_name:          string;
+  email:              string | null;
+  username:           string | null;
+  is_active:          boolean;
+  date_joined:        string;
+  student_class_id:   string | null;
+  student_class_name: string | null;
 }
 
 export interface UserDetail extends UserListItem {
@@ -226,12 +236,13 @@ export interface UserFilters {
 }
 
 export interface CreateUserPayload {
-  role:       'STUDENT' | 'TEACHER' | 'SUB_ADMIN';
-  first_name: string;
-  last_name:  string;
-  password:   string;
-  email?:     string;
-  username?:  string;
+  role:              'STUDENT' | 'TEACHER' | 'SUB_ADMIN';
+  first_name:        string;
+  last_name:         string;
+  password:          string;
+  email?:            string;
+  username?:         string;
+  student_class_id?: string | null;
 }
 
 export interface BulkStudentRow {
@@ -252,9 +263,10 @@ export interface BulkCreateResult {
 }
 
 export interface UpdateUserPayload {
-  first_name?: string;
-  last_name?:  string;
-  is_active?:  boolean;
+  first_name?:        string;
+  last_name?:         string;
+  is_active?:         boolean;
+  student_class_id?:  string | null;
 }
 
 export interface SetPasswordPayload {
@@ -440,12 +452,162 @@ export interface CreateQuizPayload {
   num_questions: number;
 }
 
+// ── Subject / Topic stats ─────────────────────────────────────
+
+export interface SubtopicBreakdown {
+  subtopic:  string;
+  note_id:   string;
+  attempts:  number;
+  avg_score: number | null;
+}
+
+export interface TopicStudyRecommendation {
+  weak_areas:               string[];
+  estimated_study_hours:    number;
+  expected_improvement_pct: number;
+}
+
+export type ConfidenceTrend = 'improving' | 'stable' | 'declining' | 'not_enough_data';
+
+export interface TopicStats {
+  subject:             string;
+  topic:               string;
+  notes_count:         number;
+  quizzes_taken:       number;
+  average_score:       number | null;
+  last_score:          number | null;
+  mastery_level:       number | null;
+  confidence_trend:    ConfidenceTrend;
+  study_minutes:       number;
+  subtopic_breakdown:  SubtopicBreakdown[];
+  recommendation:      TopicStudyRecommendation;
+}
+
+export interface TopicRow {
+  topic:       string;
+  notes_count: number;
+  quizzes:     number;
+  avg_score:   number | null;
+}
+
+export interface SubjectStats {
+  subject:        string;
+  topics_count:   number;
+  notes_count:    number;
+  quizzes_taken:  number;
+  average_score:  number | null;
+  topics:         TopicRow[];
+}
+
 export interface SubmitAttemptPayload {
   answers:      Array<{ question_id: string; chosen: string }>;
   time_taken_s?: number;
 }
 
-// ── Lesson Plan types ─────────────────────────────────────────
+// ── Lesson Document (AI-first) types ─────────────────────────
+
+export type LessonDocType       = 'plan' | 'note';
+export type GenerationMode      = 'ai' | 'upload' | 'manual';
+export type LessonDocStatus     =
+  | 'draft' | 'generating' | 'submitted' | 'under_review'
+  | 'revision_needed' | 'approved' | 'distributed';
+
+export type CurriculumType =
+  | 'nerdc' | 'british' | 'american' | 'blend_ng_uk' | 'blend_ng_us';
+
+export interface DiagnosticCard {
+  id:               string;
+  urgency:          'red' | 'yellow';
+  title:            string;
+  description:      string;
+  section:          string;
+  suggestion:       string;
+  suggested_content: string | null;
+}
+
+export interface ResourceCard {
+  id:          string;
+  type:        'video' | 'textbook' | 'past_questions' | 'website';
+  title:       string;
+  description: string;
+  relevance:   string;
+}
+
+export interface LessonDocListItem {
+  id:                  string;
+  doc_type:            LessonDocType;
+  generation_mode:     GenerationMode;
+  subject:             string;
+  topic:               string;
+  subtopic:            string;
+  class_level:         string;
+  term:                number;
+  week:                number;
+  title:               string;
+  board_summary:       string;
+  status:              LessonDocStatus;
+  distributed_to_class: boolean;
+  teacher_name:        string;
+  class_name:          string | null;
+  created_at:          string;
+  updated_at:          string;
+}
+
+export interface LessonDocDetail extends LessonDocListItem {
+  additional_context:  string;
+  content_markdown:    string;
+  diagnostic_cards:    DiagnosticCard[];
+  resource_cards:      ResourceCard[];
+  ai_task_id:          string;
+  generation_error:    string;
+  approved_by_name:    string | null;
+  approval_timestamp:  string | null;
+  verification_hash:   string;
+  admin_comments:      string;
+  distributed_at:      string | null;
+  version_count:       number;
+}
+
+export interface LessonDocVersion {
+  id:               string;
+  version_number:   number;
+  content_markdown: string;
+  board_summary:    string;
+  saved_by_name:    string | null;
+  change_note:      string;
+  created_at:       string;
+}
+
+export interface CreateLessonDocPayload {
+  doc_type:           LessonDocType;
+  generation_mode:    GenerationMode;
+  subject:            string;
+  topic:              string;
+  subtopic?:          string;
+  class_level:        string;
+  term:               number;
+  week:               number;
+  additional_context?: string;
+}
+
+export interface UpdateLessonDocPayload {
+  title?:             string;
+  content_markdown?:  string;
+  board_summary?:     string;
+  additional_context?: string;
+}
+
+export interface RegenerateSectionPayload {
+  section_heading: string;
+  instruction?:    string;
+}
+
+export interface AdminReviewLessonDocPayload {
+  action:   'approve' | 'request_revision';
+  comment?: string;
+}
+
+// ── Lesson Plan types (legacy) ────────────────────────────────
 
 export type LessonPlanStatus =
   | 'DRAFT'

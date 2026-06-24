@@ -10,9 +10,11 @@ import type {
   StudentQuizPreferences,
   StudentPreferencesPayload,
   SubjectLimits,
+  SubjectStats,
   SubmitAttemptPayload,
   TeacherSubjectThreshold,
   TeacherThresholdPayload,
+  TopicStats,
 } from '@/types';
 
 export const createQuiz = (payload: CreateQuizPayload): Promise<{ quiz_id: string; status: string }> =>
@@ -38,6 +40,18 @@ export const getPerformanceStats = (): Promise<PerformanceStats> =>
 
 export const getTeacherStudentStats = (): Promise<StudentPerformanceSummary[]> =>
   apiClient.get<StudentPerformanceSummary[]>('/quiz/teacher/students/').then((r) => r.data);
+
+// ── Topic / Subject stats ─────────────────────────────────────
+
+export const getTopicStats = (subject: string, topic: string): Promise<TopicStats> =>
+  apiClient
+    .get<TopicStats>('/quiz/topic-stats/', { params: { subject, topic } })
+    .then((r) => r.data);
+
+export const getSubjectStats = (subject: string): Promise<SubjectStats> =>
+  apiClient
+    .get<SubjectStats>('/quiz/subject-stats/', { params: { subject } })
+    .then((r) => r.data);
 
 // ── Quiz settings ─────────────────────────────────────────────
 

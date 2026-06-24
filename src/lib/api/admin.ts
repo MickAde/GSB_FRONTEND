@@ -2,6 +2,7 @@ import apiClient from './client';
 import type {
   PaginatedResponse,
   SchoolAdmin,
+  SchoolClass,
   SchoolCulture,
   SchoolCulturePayload,
   DailyContent,
@@ -16,6 +17,22 @@ import type {
   UpdateUserPayload,
   SetPasswordPayload,
 } from '@/types';
+
+// ── Classes ───────────────────────────────────────────────────
+
+export const getClasses = (): Promise<SchoolClass[]> =>
+  apiClient.get<SchoolClass[]>('/admin/classes/').then((r) => r.data);
+
+export const createClass = (name: string): Promise<SchoolClass> =>
+  apiClient.post<SchoolClass>('/admin/classes/', { name }).then((r) => r.data);
+
+export const renameClass = (id: string, name: string): Promise<SchoolClass> =>
+  apiClient.patch<SchoolClass>(`/admin/classes/${id}/`, { name }).then((r) => r.data);
+
+export const deleteClass = (id: string): Promise<void> =>
+  apiClient.delete(`/admin/classes/${id}/`).then(() => undefined);
+
+// ── School ────────────────────────────────────────────────────
 
 export const getAdminSchool = (): Promise<SchoolAdmin> =>
   apiClient.get<SchoolAdmin>('/admin/school/').then((r) => r.data);
