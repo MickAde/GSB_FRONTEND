@@ -163,7 +163,7 @@ export default function AdminClassesPage() {
     onError:    () => toast.error('Failed to delete class.'),
   });
 
-  const handleAdd    = async (name: string) => createMut.mutateAsync(name);
+  const handleAdd    = async (name: string) => { await createMut.mutateAsync(name); };
   const handleRename = async (id: string, name: string) => { await renameMut.mutateAsync({ id, name }); };
   const handleDelete = (id: string, name: string) => {
     if (confirm(`Delete class "${name}"? Students and teachers assigned to it will become unclassified.`)) {
