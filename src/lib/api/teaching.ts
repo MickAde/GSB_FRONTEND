@@ -97,6 +97,9 @@ export const requestAIAssist = (id: string): Promise<{ ai_suggestions: string }>
 export const getAdminLessonPlans = (params?: object): Promise<LessonPlanListItem[]> =>
   apiClient.get<LessonPlanListItem[]>('/admin/lesson-plans/', { params }).then((r) => r.data);
 
+export const getAdminLessonPlanDetail = (id: string): Promise<LessonPlanDetail> =>
+  apiClient.get<LessonPlanDetail>(`/admin/lesson-plans/${id}/review/`).then((r) => r.data);
+
 export const reviewLessonPlan = (
   id: string,
   payload: AdminReviewPayload,
