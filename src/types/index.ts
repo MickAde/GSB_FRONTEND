@@ -584,7 +584,6 @@ export interface CreateLessonDocPayload {
   subject:            string;
   topic:              string;
   subtopic?:          string;
-  class_level:        string;
   term:               number;
   week:               number;
   additional_context?: string;

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Brain, Upload, PenLine, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Brain, PenLine, ChevronRight } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -17,15 +17,6 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { LessonDocType, GenerationMode, CurriculumType } from '@/types';
 
-// Class levels per curriculum (must match backend CLASS_LEVELS)
-const CLASS_LEVELS: Record<CurriculumType, string[]> = {
-  nerdc:       ['Nursery 1', 'Nursery 2', 'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6', 'JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2', 'SSS 3'],
-  british:     ['Nursery', 'Reception', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6', 'Year 7', 'Year 8', 'Year 9', 'Year 10', 'Year 11', 'Year 12', 'Year 13'],
-  american:    ['Pre-K', 'Kindergarten', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'],
-  blend_ng_uk: ['Nursery 1', 'Nursery 2', 'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6', 'JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2', 'SSS 3', 'Lower Sixth', 'Upper Sixth'],
-  blend_ng_us: ['Nursery 1', 'Nursery 2', 'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6', 'JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2', 'SSS 3'],
-};
-
 const CURRICULUM_LABELS: Record<CurriculumType, string> = {
   nerdc:       'NERDC (Nigerian)',
   british:     'British / Cambridge',
@@ -40,7 +31,6 @@ const schema = z.object({
   subject:            z.string().min(1, 'Subject is required'),
   topic:              z.string().min(2, 'Topic is required'),
   subtopic:           z.string().optional(),
-  class_level:        z.string().min(1, 'Class level is required'),
   term:               z.number().min(1).max(3),
   week:               z.number().min(1).max(12),
   additional_context: z.string().optional(),
@@ -52,7 +42,7 @@ export default function CreateLessonDocPage() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
   const curriculumType: CurriculumType = (user?.school as any)?.curriculum_type ?? 'nerdc';
-  const classLevels = CLASS_LEVELS[curriculumType] ?? CLASS_LEVELS.nerdc;
+  const teacherClass = user?.student_class_name ?? null;
 
   const [step, setStep] = useState<'mode' | 'form'>('mode');
 
@@ -66,7 +56,6 @@ export default function CreateLessonDocPage() {
       subject: '',
       topic: '',
       subtopic: '',
-      class_level: '',
       additional_context: '',
     },
   });
@@ -156,13 +145,22 @@ export default function CreateLessonDocPage() {
           </div>
         </section>
 
-        <div className="flex justify-between items-center pt-2">
-          <p className="text-xs text-muted-foreground">
-            Curriculum: <span className="font-semibold text-foreground">{CURRICULUM_LABELS[curriculumType]}</span>
-            <span className="ml-1 text-muted-foreground/60">(set by your school admin)</span>
+        <div className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-xs text-muted-foreground space-y-1">
+          <p>Curriculum: <span className="font-semibold text-foreground">{CURRICULUM_LABELS[curriculumType]}</span> <span className="text-muted-foreground/60">(set by admin)</span></p>
+          <p>
+            Class:{' '}
+            {teacherClass ? (
+              <span className="font-semibold text-foreground">{teacherClass}</span>
+            ) : (
+              <span className="text-red-500 font-medium">Not assigned — contact your admin</span>
+            )}
           </p>
+        </div>
+
+        <div className="flex justify-end pt-2">
           <Button
             className="gradient-primary gap-2 rounded-2xl font-bold text-white shadow-lg shadow-primary/25 hover:opacity-90"
+            disabled={!teacherClass}
             onClick={() => setStep('form')}
           >
             Continue <ChevronRight className="h-4 w-4" />
@@ -220,29 +218,13 @@ export default function CreateLessonDocPage() {
           <Input {...form.register('subtopic')} placeholder="e.g. Light Reactions" className="rounded-xl" />
         </div>
 
-        {/* Class Level */}
+        {/* Class Level — auto from teacher profile */}
         <div className="space-y-1.5">
-          <Label>Class Level *</Label>
-          <div className="flex flex-wrap gap-2">
-            {classLevels.map((level) => (
-              <button
-                key={level}
-                type="button"
-                onClick={() => form.setValue('class_level', level, { shouldValidate: true })}
-                className={cn(
-                  'rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
-                  form.watch('class_level') === level
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground hover:text-foreground'
-                )}
-              >
-                {level}
-              </button>
-            ))}
+          <Label>Class</Label>
+          <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-2.5">
+            <span className="text-sm font-semibold text-foreground">{teacherClass}</span>
+            <span className="text-xs text-muted-foreground">(your assigned class)</span>
           </div>
-          {form.formState.errors.class_level && (
-            <p className="text-xs text-red-500">{form.formState.errors.class_level.message}</p>
-          )}
         </div>
 
         {/* Term + Week */}
