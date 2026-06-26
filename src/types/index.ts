@@ -602,8 +602,8 @@ export interface RegenerateSectionPayload {
 }
 
 export interface AdminReviewLessonDocPayload {
-  action:   'approve' | 'request_revision';
-  comment?: string;
+  action:          'approve' | 'request_revision';
+  admin_comments?: string;
 }
 
 // ── Lesson Plan types (legacy) ────────────────────────────────
