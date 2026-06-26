@@ -126,7 +126,7 @@ export default function CreateLessonDocPage() {
             {([
               { mode: 'ai',     icon: Brain,   label: 'Generate with AI', desc: 'Describe the topic — AI writes the full document for you.' },
               { mode: 'manual', icon: PenLine, label: 'Write Manually',   desc: 'Start with a blank template and fill in each section.' },
-            ] as { mode: GenerationMode; icon: React.ElementType; label: string; desc: string }[]).map(({ mode, icon: Icon, label, desc }) => (
+            ] as { mode: 'ai' | 'manual'; icon: React.ElementType; label: string; desc: string }[]).map(({ mode, icon: Icon, label, desc }) => (
               <button
                 key={mode}
                 onClick={() => form.setValue('generation_mode', mode)}
