@@ -10,7 +10,6 @@ const links: SidebarLink[] = [
   { href: '/admin/users',         icon: Users,            label: 'Users',                                  },
   { href: '/admin/classes',       icon: GraduationCap,    label: 'Classes',          mobileLabel: 'Classes' },
   { href: '/admin/lesson-docs',   icon: Brain,            label: 'Lesson Documents', mobileLabel: 'Lessons' },
-  { href: '/admin/lesson-plans',  icon: ClipboardCheck,   label: 'Lesson Plans',     mobileLabel: 'Plans'   },
   { href: '/admin/profile',       icon: User,             label: 'Profile',                                },
 ];
 

@@ -57,11 +57,15 @@ function UserSection() {
 }
 
 function NavItems({ links, pathname, onNavigate }: { links: SidebarLink[]; pathname: string; onNavigate?: () => void }) {
+  const activeHref = [...links]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find(l => pathname === l.href || pathname.startsWith(l.href + '/'))?.href ?? null;
+
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-4">
       <ul className="space-y-1">
         {links.map(({ href, icon: Icon, label }) => {
-          const active = pathname === href || pathname.startsWith(href + '/');
+          const active = href === activeHref;
           return (
             <li key={href}>
               <Link href={href} onClick={onNavigate} className={cn('group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium', active ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' : 'text-muted-foreground hover:bg-muted hover:text-foreground')}>
@@ -116,6 +120,11 @@ export function Sidebar({ links }: { links: SidebarLink[] }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const needsMore  = links.length > BOTTOM_NAV_MAX;
   const bottomLinks = needsMore ? links.slice(0, BOTTOM_NAV_MAX - 1) : links;
+
+  const activeHref = [...links]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find(l => pathname === l.href || pathname.startsWith(l.href + '/'))?.href ?? null;
+
   return (
     <>
       <aside className="hidden lg:flex w-64 shrink-0 flex-col h-screen sticky top-0 overflow-y-auto">
@@ -124,7 +133,7 @@ export function Sidebar({ links }: { links: SidebarLink[] }) {
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md">
         <div className="flex items-stretch justify-around">
           {bottomLinks.map(({ href, icon: Icon, label, mobileLabel }) => {
-            const active = pathname === href || pathname.startsWith(href + '/');
+            const active = href === activeHref;
             return (
               <Link key={href} href={href} className={cn('flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors', active ? 'text-primary' : 'text-muted-foreground')}>
                 <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-primary' : 'text-muted-foreground/60')} />

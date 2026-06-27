@@ -9,7 +9,6 @@ const links: SidebarLink[] = [
   { href: '/teacher/conformity',   icon: BarChart2,       label: 'Conformity Reports', mobileLabel: 'Reports' },
   { href: '/teacher/students',     icon: Users,           label: 'Students',                               },
   { href: '/teacher/lesson-docs',  icon: Brain,           label: 'Lesson Documents', mobileLabel: 'Lessons' },
-  { href: '/teacher/lesson-plans', icon: BookOpen,        label: 'Lesson Plans',   mobileLabel: 'Plans'   },
   { href: '/teacher/settings',     icon: Settings,        label: 'Settings',                               },
   { href: '/teacher/profile',      icon: User,            label: 'Profile',                                },
 ];
