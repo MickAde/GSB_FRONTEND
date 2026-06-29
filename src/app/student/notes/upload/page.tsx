@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { NoteUploadDropzone } from '@/components/notes/NoteUploadDropzone';
-import { uploadNote } from '@/lib/api/notes';
+import { uploadNote, combinedUploadNotes } from '@/lib/api/notes';
 import { STANDARD_SUBJECTS } from '@/lib/subjects';
 import { ArrowLeft, Lightbulb, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,15 +24,23 @@ const schema = z.object({
 });
 type Fields = z.infer<typeof schema>;
 
+function getNoteType(f: File): string {
+  if (f.type === 'application/pdf') return 'pdf';
+  if (f.type.startsWith('image/'))  return 'image';
+  if (f.type.startsWith('audio/'))  return 'voice';
+  if (f.type === 'text/plain')       return 'text';
+  // Word, PowerPoint, Excel, and any other file → AI-powered doc extraction
+  return 'doc';
+}
+
 export default function StudentNoteUploadPage() {
   const router       = useRouter();
   const searchParams = useSearchParams();
 
-  // Subject from URL param — when navigating from a subject row in notes page
   const prefilledSubject = searchParams.get('subject') ?? '';
   const subjectLocked    = prefilledSubject !== '';
 
-  const [file, setFile]           = useState<File | null>(null);
+  const [files, setFiles]         = useState<File[]>([]);
   const [progress, setProgress]   = useState(0);
   const [uploading, setUploading] = useState(false);
 
@@ -41,34 +49,53 @@ export default function StudentNoteUploadPage() {
     defaultValues: { subject: prefilledSubject, topic: '', subtopic: '' },
   });
 
-  // Sync prefilled subject if URL param changes after mount
   useEffect(() => {
     if (prefilledSubject) form.setValue('subject', prefilledSubject, { shouldValidate: true });
   }, [prefilledSubject, form]);
 
-  const getNoteType = (f: File): string => {
-    if (f.type === 'application/pdf')  return 'pdf';
-    if (f.type.startsWith('image/'))   return 'image';
-    if (f.type.startsWith('audio/'))   return 'voice';
-    return 'text';
+  const handleFiles = (incoming: File[]) => {
+    setFiles((prev) => {
+      const existing = new Set(prev.map((f) => f.name + f.size));
+      const fresh    = incoming.filter((f) => !existing.has(f.name + f.size));
+      return [...prev, ...fresh].slice(0, 10);
+    });
+  };
+
+  const handleClear = (index?: number) => {
+    if (index === undefined) { setFiles([]); return; }
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (meta: Fields) => {
-    if (!file) { toast.error('Please select a file first'); return; }
-
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('note_type', getNoteType(file));
-    fd.append('subject', meta.subject);
-    if (meta.topic)    fd.append('topic',    meta.topic);
-    if (meta.subtopic) fd.append('subtopic', meta.subtopic);
+    if (!files.length) { toast.error('Please select at least one file'); return; }
 
     setUploading(true);
     setProgress(0);
+
     try {
-      const result = await uploadNote(fd, setProgress);
-      toast.success('Note uploaded! Processing now…');
-      router.push(`/student/notes/${result.note_id}/status`);
+      if (files.length === 1) {
+        const fd = new FormData();
+        fd.append('file',      files[0]);
+        fd.append('note_type', getNoteType(files[0]));
+        fd.append('subject',   meta.subject);
+        if (meta.topic)    fd.append('topic',    meta.topic);
+        if (meta.subtopic) fd.append('subtopic', meta.subtopic);
+
+        const result = await uploadNote(fd, setProgress);
+        toast.success('Note uploaded! Processing now…');
+        router.push(`/student/notes/${result.note_id}/status`);
+      } else {
+        // Multiple files — combine into ONE note with ONE summary
+        const fd = new FormData();
+        files.forEach((f) => fd.append('files', f));
+        fd.append('subject', meta.subject);
+        if (meta.topic)    fd.append('topic',    meta.topic);
+        if (meta.subtopic) fd.append('subtopic', meta.subtopic);
+
+        const result = await combinedUploadNotes(fd, setProgress);
+        toast.success(`${files.length} files combined into one note — extracting text now…`);
+        router.push(`/student/notes/${result.note_id}/status`);
+      }
     } catch {
       toast.error('Upload failed. Please try again.');
       setUploading(false);
@@ -81,47 +108,44 @@ export default function StudentNoteUploadPage() {
   return (
     <div className="max-w-2xl space-y-5">
 
-      {/* Back + heading */}
       <div>
         <Link href="/student/notes">
           <Button variant="ghost" size="sm" className="-ml-2 mb-2 text-muted-foreground">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            {subjectLocked ? `${prefilledSubject}` : 'My Notes'}
+            {subjectLocked ? prefilledSubject : 'My Notes'}
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-foreground">Add a Note</h1>
+        <h1 className="text-2xl font-bold text-foreground">Add Notes</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {subjectLocked
             ? `Uploading under ${prefilledSubject}. AI will build a smart study guide automatically.`
-            : 'Upload any note and our AI will build you a smart study guide automatically.'}
+            : 'Upload up to 10 notes at once — PDF, images, Word, PowerPoint, audio, or text.'}
         </p>
       </div>
 
-      {/* Tip banner */}
       <div className="flex gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
         <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
         <span>
           <strong>Tip:</strong> Clear, well-lit photos of handwritten notes give the best results.
-          For PDFs, digital text files are processed faster than scanned ones.
+          Word and PowerPoint files are processed automatically — no scanning needed.
         </span>
       </div>
 
       <Card>
         <CardContent className="space-y-5 pt-5">
 
-          {/* Dropzone */}
           <NoteUploadDropzone
-            onFile={setFile}
-            file={file}
-            onClear={() => setFile(null)}
+            onFiles={handleFiles}
+            files={files}
+            onClear={handleClear}
             disabled={uploading}
+            maxFiles={10}
           />
 
-          {/* Upload progress */}
           {uploading && (
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Uploading your note…</span>
+                <span>Uploading {files.length > 1 ? `${files.length} notes` : 'your note'}…</span>
                 <span className="font-semibold">{progress}%</span>
               </div>
               <Progress value={progress} className="h-2" />
@@ -131,7 +155,6 @@ export default function StudentNoteUploadPage() {
 
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
 
-            {/* Subject — required */}
             <div className="space-y-2">
               <Label className="font-semibold">
                 Subject{' '}
@@ -142,7 +165,6 @@ export default function StudentNoteUploadPage() {
               </Label>
 
               {subjectLocked ? (
-                /* Read-only locked chip */
                 <div className="flex h-10 items-center rounded-xl border border-primary/40 bg-primary/5 px-3 text-sm font-semibold text-primary">
                   {prefilledSubject}
                 </div>
@@ -157,7 +179,6 @@ export default function StudentNoteUploadPage() {
                   {form.formState.errors.subject && (
                     <p className="text-xs text-red-500">{form.formState.errors.subject.message}</p>
                   )}
-                  {/* Quick-pick chips — all standard subjects */}
                   <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
                     {STANDARD_SUBJECTS.map((s) => (
                       <button
@@ -180,7 +201,6 @@ export default function StudentNoteUploadPage() {
               )}
             </div>
 
-            {/* Topic + Subtopic */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>Topic <span className="font-normal text-muted-foreground">(optional)</span></Label>
@@ -192,13 +212,16 @@ export default function StudentNoteUploadPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <Button
               type="submit"
               className="w-full bg-primary py-5 text-base hover:bg-primary/90"
-              disabled={!file || uploading}
+              disabled={!files.length || uploading}
             >
-              {uploading ? `Uploading… ${progress}%` : 'Upload & Build Study Guide →'}
+              {uploading
+                ? `Uploading… ${progress}%`
+                : files.length > 1
+                ? `Upload ${files.length} Notes & Build Study Guides →`
+                : 'Upload & Build Study Guide →'}
             </Button>
           </form>
         </CardContent>

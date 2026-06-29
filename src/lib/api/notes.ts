@@ -38,6 +38,19 @@ export const bulkUploadNotes = (formData: FormData): Promise<BulkUploadResponse>
     .post<BulkUploadResponse>('/notes/upload/bulk/', formData)
     .then((r) => r.data);
 
+export const combinedUploadNotes = (
+  formData: FormData,
+  onProgress?: (pct: number) => void,
+): Promise<UploadResponse> =>
+  apiClient
+    .post<UploadResponse>('/notes/upload/combined/', formData, {
+      timeout: 300_000,
+      onUploadProgress: (evt) => {
+        if (onProgress) onProgress(Math.round((evt.loaded * 100) / (evt.total ?? 1)));
+      },
+    })
+    .then((r) => r.data);
+
 export const getNotes = (filters?: NoteFilters): Promise<PaginatedResponse<NoteListItem>> =>
   apiClient.get<PaginatedResponse<NoteListItem>>('/notes/', { params: filters }).then((r) => r.data);
 
