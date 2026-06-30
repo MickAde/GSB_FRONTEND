@@ -3,7 +3,6 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-import type { TooltipProps } from 'recharts';
 import type { PerformanceHistoryPoint } from '@/types';
 
 const PRIMARY = 'hsl(250, 85%, 60%)';
@@ -12,9 +11,11 @@ function formatTick(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
-function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
+interface TooltipEntry { payload?: PerformanceHistoryPoint }
+function ChartTooltip({ active, payload }: { active?: boolean; payload?: TooltipEntry[] }) {
   if (!active || !payload?.length) return null;
-  const pt = payload[0]?.payload as PerformanceHistoryPoint;
+  const pt = payload[0]?.payload;
+  if (!pt) return null;
   return (
     <div className="rounded-xl border border-border bg-card px-3 py-2 shadow-lg text-center">
       <p className="text-[11px] text-muted-foreground">
