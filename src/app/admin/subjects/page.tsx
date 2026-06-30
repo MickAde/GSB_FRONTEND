@@ -291,8 +291,9 @@ export default function AdminSubjectsPage() {
     onError:    () => toast.error('Failed to delete subject.'),
   });
 
-  const handleAdd    = (name: string, isGeneral: boolean, classIds: string[]) =>
-    createMut.mutateAsync({ name, isGeneral, classIds });
+  const handleAdd    = async (name: string, isGeneral: boolean, classIds: string[]): Promise<void> => {
+    await createMut.mutateAsync({ name, isGeneral, classIds });
+  };
 
   const handleSave   = async (id: string, name: string, isGeneral: boolean, classIds: string[]): Promise<void> => {
     await updateMut.mutateAsync({ id, name, isGeneral, classIds });
