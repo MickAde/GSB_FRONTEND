@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
@@ -115,13 +115,13 @@ export function BulkImportTable() {
                 <TableCell><CheckCircle2 className="h-4 w-4 text-green-500" /></TableCell>
                 <TableCell>{u.first_name} {u.last_name}</TableCell>
                 <TableCell>{u.username}</TableCell>
-                <TableCell>â€”</TableCell>
+                <TableCell>—</TableCell>
               </TableRow>
             ))}
             {result.failed.map((f, i) => (
               <TableRow key={i} className="bg-red-50">
                 <TableCell><XCircle className="h-4 w-4 text-red-500" /></TableCell>
-                <TableCell>â€”</TableCell>
+                <TableCell>—</TableCell>
                 <TableCell>{f.username}</TableCell>
                 <TableCell className="text-xs text-red-600">{f.error}</TableCell>
               </TableRow>
@@ -160,7 +160,7 @@ export function BulkImportTable() {
                   <TableCell>{row.first_name}</TableCell>
                   <TableCell>{row.last_name}</TableCell>
                   <TableCell>{row.username}</TableCell>
-                  <TableCell>{row.email ?? 'â€”'}</TableCell>
+                  <TableCell>{row.email ?? '—'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -169,7 +169,7 @@ export function BulkImportTable() {
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => setStep('input')}>â† Back</Button>
           <Button onClick={handleSubmit} disabled={loading} className="bg-primary hover:bg-primary/90">
-            {loading ? 'Importingâ€¦' : `Import ${rows.length} Students`}
+            {loading ? 'Importing…' : `Import ${rows.length} Students`}
           </Button>
         </div>
       </div>

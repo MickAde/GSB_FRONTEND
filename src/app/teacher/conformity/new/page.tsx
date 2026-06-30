@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -89,12 +89,12 @@ export default function NewConformityPage() {
                     onValueChange={(v) => form.setValue('teacher_note_id', v, { shouldValidate: true })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a noteâ€¦" />
+                      <SelectValue placeholder="Choose a note…" />
                     </SelectTrigger>
                     <SelectContent>
                       {myReadyNotes.map((n) => (
                         <SelectItem key={n.id} value={n.id}>
-                          {n.file_name}{n.subject ? ` Â· ${n.subject}` : ''}
+                          {n.file_name}{n.subject ? ` · ${n.subject}` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -112,7 +112,7 @@ export default function NewConformityPage() {
                   disabled={!selectedTeacherNote}
                   onClick={() => setStep(2)}
                 >
-                  Next â†’
+                  Next →
                 </Button>
               </div>
             </CardContent>
@@ -135,12 +135,12 @@ export default function NewConformityPage() {
                     onValueChange={(v) => form.setValue('student_note_id', v, { shouldValidate: true })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a student noteâ€¦" />
+                      <SelectValue placeholder="Choose a student note…" />
                     </SelectTrigger>
                     <SelectContent>
                       {studentReadyNotes.map((n) => (
                         <SelectItem key={n.id} value={n.id}>
-                          {n.owner_name} â€” {n.file_name}{n.subject ? ` Â· ${n.subject}` : ''}
+                          {n.owner_name} — {n.file_name}{n.subject ? ` · ${n.subject}` : ''}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -157,7 +157,7 @@ export default function NewConformityPage() {
                   className="bg-primary hover:bg-primary/90"
                   disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? 'Creatingâ€¦' : 'Create Report â†’'}
+                  {form.formState.isSubmitting ? 'Creating…' : 'Create Report →'}
                 </Button>
               </div>
             </CardContent>

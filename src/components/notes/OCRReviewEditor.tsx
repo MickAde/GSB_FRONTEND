@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
@@ -58,7 +58,7 @@ export function OCRReviewEditor({ noteId, rawText, basePath }: Props) {
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string } } };
       const detail = e?.response?.data?.detail ?? '';
-      // Backend rejected because the note already moved past review â€” send user forward
+      // Backend rejected because the note already moved past review — send user forward
       if (detail.includes('PROCESSING_AI') || detail.includes('READY')) {
         qc.removeQueries({ queryKey: queryKeys.notes.status(noteId) });
         router.push(`${basePath}/${noteId}/status`);
@@ -81,7 +81,7 @@ export function OCRReviewEditor({ noteId, rawText, basePath }: Props) {
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
         <div>
           <strong>What to check:</strong> look for jumbled words, missing spaces, or characters that don&apos;t make sense.
-          Fix any errors so the AI can understand your notes correctly â€” then click <em>Confirm</em>.
+          Fix any errors so the AI can understand your notes correctly — then click <em>Confirm</em>.
         </div>
       </div>
 
@@ -96,7 +96,7 @@ export function OCRReviewEditor({ noteId, rawText, basePath }: Props) {
 
       {/* Stats + auto-save indicator */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>{charCount.toLocaleString()} chars Â· {wordCount.toLocaleString()} words</span>
+        <span>{charCount.toLocaleString()} chars · {wordCount.toLocaleString()} words</span>
         <span className="flex items-center gap-1">
           <Save className="h-3 w-3" />
           {lastSaved ? `Saved ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Auto-saves every 10 s'}
@@ -113,7 +113,7 @@ export function OCRReviewEditor({ noteId, rawText, basePath }: Props) {
           onClick={handleConfirm}
           disabled={submitting}
         >
-          {submitting ? 'Confirmingâ€¦' : 'Confirm & Generate Study Guide â†’'}
+          {submitting ? 'Confirming…' : 'Confirm & Generate Study Guide →'}
         </Button>
       </div>
     </div>

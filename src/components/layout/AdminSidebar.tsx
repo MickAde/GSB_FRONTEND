@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, Building2, Heart, CalendarDays, Users, GraduationCap, Brain, User, ClipboardCheck } from 'lucide-react';
+import { LayoutDashboard, Building2, Heart, CalendarDays, Users, GraduationCap, Brain, User, BookOpen } from 'lucide-react';
 import { Sidebar, type SidebarLink } from './StudentSidebar';
 
 const links: SidebarLink[] = [
@@ -9,6 +9,7 @@ const links: SidebarLink[] = [
   { href: '/admin/daily-content', icon: CalendarDays,     label: 'Daily Content',    mobileLabel: 'Daily'   },
   { href: '/admin/users',         icon: Users,            label: 'Users',                                  },
   { href: '/admin/classes',       icon: GraduationCap,    label: 'Classes',          mobileLabel: 'Classes' },
+  { href: '/admin/subjects',      icon: BookOpen,         label: 'Subjects',         mobileLabel: 'Subjects'},
   { href: '/admin/lesson-docs',   icon: Brain,            label: 'Lesson Documents', mobileLabel: 'Lessons' },
   { href: '/admin/profile',       icon: User,             label: 'Profile',                                },
 ];

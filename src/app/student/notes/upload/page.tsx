@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +14,9 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { NoteUploadDropzone } from '@/components/notes/NoteUploadDropzone';
 import { uploadNote, combinedUploadNotes } from '@/lib/api/notes';
-import { STANDARD_SUBJECTS } from '@/lib/subjects';
+import { getSubjectsForClass } from '@/lib/api/schools';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { queryKeys } from '@/lib/query-keys';
 import { ArrowLeft, Lightbulb, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +46,15 @@ export default function StudentNoteUploadPage() {
   const [files, setFiles]         = useState<File[]>([]);
   const [progress, setProgress]   = useState(0);
   const [uploading, setUploading] = useState(false);
+
+  const { data: me } = useCurrentUser();
+  const classId = me?.student_class_id ?? null;
+
+  const { data: subjects = [] } = useQuery({
+    queryKey: queryKeys.subjects(classId),
+    queryFn:  () => getSubjectsForClass(classId),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const form = useForm<Fields>({
     resolver: zodResolver(schema),
@@ -179,24 +191,26 @@ export default function StudentNoteUploadPage() {
                   {form.formState.errors.subject && (
                     <p className="text-xs text-red-500">{form.formState.errors.subject.message}</p>
                   )}
-                  <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
-                    {STANDARD_SUBJECTS.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => form.setValue('subject', subjectValue === s ? '' : s, { shouldValidate: true })}
-                        disabled={uploading}
-                        className={cn(
-                          'rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors',
-                          subjectValue === s
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-primary',
-                        )}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
+                  {subjects.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
+                      {subjects.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => form.setValue('subject', subjectValue === s.name ? '' : s.name, { shouldValidate: true })}
+                          disabled={uploading}
+                          className={cn(
+                            'rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors',
+                            subjectValue === s.name
+                              ? 'border-primary bg-primary text-white'
+                              : 'border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-primary',
+                          )}
+                        >
+                          {s.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </>
               )}
             </div>

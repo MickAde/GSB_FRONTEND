@@ -1,19 +1,19 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import {
   ChevronRight, ChevronDown, Upload, Plus, BookOpen,
-  FolderOpen, X, Check,
+  FolderOpen,
 } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { NoteStatusBadge } from '@/components/notes/NoteStatusBadge';
 import { LoadingPage } from '@/components/common/LoadingSpinner';
 import { useNotes } from '@/hooks/useNotes';
-import { useAuthStore } from '@/stores/authStore';
-import { STANDARD_SUBJECTS } from '@/lib/subjects';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { getSubjectsForClass } from '@/lib/api/schools';
+import { queryKeys } from '@/lib/query-keys';
 import { formatDate, cn } from '@/lib/utils';
 import type { NoteListItem, NoteType } from '@/types';
 
@@ -153,80 +153,19 @@ function SubjectRow({
   );
 }
 
-// ── add subject inline form ───────────────────────────────────────────────────
-
-function AddSubjectRow({ onAdd }: { onAdd: (name: string) => void }) {
-  const [open,  setOpen]  = useState(false);
-  const [value, setValue] = useState('');
-
-  const submit = () => {
-    const name = value.trim();
-    if (!name) return;
-    onAdd(name);
-    setValue('');
-    setOpen(false);
-    toast.success(`"${name}" added to your subjects.`);
-  };
-
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-border px-5 py-4 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-      >
-        <Plus className="h-4 w-4" />
-        Add Subject
-      </button>
-    );
-  }
-
-  return (
-    <div className="flex items-center gap-2 rounded-2xl border-2 border-primary/30 bg-primary/5 px-5 py-3">
-      <Plus className="h-4 w-4 shrink-0 text-primary" />
-      <Input
-        autoFocus
-        placeholder="Subject name…"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => { if (e.key === 'Enter') submit(); if (e.key === 'Escape') setOpen(false); }}
-        className="h-8 flex-1 border-0 bg-transparent p-0 text-sm focus-visible:ring-0 shadow-none"
-      />
-      <button type="button" onClick={submit} disabled={!value.trim()} className="text-primary hover:text-primary/80 disabled:opacity-40">
-        <Check className="h-4 w-4" />
-      </button>
-      <button type="button" onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
-        <X className="h-4 w-4" />
-      </button>
-    </div>
-  );
-}
-
 // ── main page ─────────────────────────────────────────────────────────────────
 
 export default function StudentNotesPage() {
-  const { userId } = useAuthStore();
-  const storageKey = `gsb_custom_subjects_${userId ?? 'local'}`;
-
   const [expandedSubject, setExpandedSubject] = useState<string | null>(null);
-  const [customSubjects,  setCustomSubjects]  = useState<string[]>([]);
 
-  // Hydrate custom subjects from localStorage after mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) setCustomSubjects(JSON.parse(raw));
-    } catch {}
-  }, [storageKey]);
+  const { data: me } = useCurrentUser();
+  const classId = me?.student_class_id ?? null;
 
-  const addCustomSubject = (name: string) => {
-    setCustomSubjects((prev) => {
-      const updated = [...prev, name];
-      localStorage.setItem(storageKey, JSON.stringify(updated));
-      return updated;
-    });
-    setExpandedSubject(name); // auto-open the new subject
-  };
+  const { data: dbSubjects = [] } = useQuery({
+    queryKey: queryKeys.subjects(classId),
+    queryFn:  () => getSubjectsForClass(classId),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data, isLoading } = useNotes();
   const notes = data?.results ?? [];
@@ -242,13 +181,14 @@ export default function StudentNotesPage() {
     return map;
   }, [notes]);
 
-  // Merge all subjects: standard first, then custom, then any notes subjects not in either list
+  // DB subjects first, then any orphaned note subjects not in the DB list
   const allSubjects = useMemo(() => {
-    const noteSubjects = Array.from(notesBySubject.keys()).filter(
-      (s) => s !== 'Uncategorized' && !STANDARD_SUBJECTS.includes(s as never) && !customSubjects.includes(s),
+    const dbNames = new Set(dbSubjects.map((s) => s.name));
+    const orphaned = Array.from(notesBySubject.keys()).filter(
+      (s) => s !== 'Uncategorized' && !dbNames.has(s),
     );
-    return [...STANDARD_SUBJECTS, ...customSubjects, ...noteSubjects];
-  }, [notesBySubject, customSubjects]);
+    return [...dbSubjects.map((s) => s.name), ...orphaned];
+  }, [notesBySubject, dbSubjects]);
 
   // Stats
   const stats = {
@@ -321,8 +261,6 @@ export default function StudentNotesPage() {
           />
         )}
 
-        {/* Add subject */}
-        <AddSubjectRow onAdd={addCustomSubject} />
       </div>
     </div>
   );

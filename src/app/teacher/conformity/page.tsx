@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -55,7 +55,7 @@ export default function ConformityListPage() {
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-foreground truncate">
-                      {report.student_name} Â· {report.subject}
+                      {report.student_name} · {report.subject}
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">{formatDate(report.generated_at)}</p>
                   </div>

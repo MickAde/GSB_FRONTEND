@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Brain, PenLine, ChevronRight } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { createLessonDoc } from '@/lib/api/teaching';
-import { STANDARD_SUBJECTS } from '@/lib/subjects';
+import { getSubjectsForClass } from '@/lib/api/schools';
+import { queryKeys } from '@/lib/query-keys';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { LessonDocType, GenerationMode, CurriculumType } from '@/types';
@@ -42,7 +43,14 @@ export default function CreateLessonDocPage() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
   const curriculumType: CurriculumType = (user?.school as any)?.curriculum_type ?? 'nerdc';
-  const teacherClass = user?.student_class_name ?? null;
+  const teacherClass  = user?.student_class_name ?? null;
+  const classId       = user?.student_class_id   ?? null;
+
+  const { data: subjects = [] } = useQuery({
+    queryKey: queryKeys.subjects(classId),
+    queryFn:  () => getSubjectsForClass(classId),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const [step, setStep] = useState<'mode' | 'form'>('mode');
 
@@ -196,8 +204,11 @@ export default function CreateLessonDocPage() {
             className="w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <option value="">Select subject…</option>
-            {STANDARD_SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
+            {subjects.map((s) => <option key={s.id} value={s.name}>{s.name}</option>)}
           </select>
+          {subjects.length === 0 && (
+            <p className="text-xs text-muted-foreground">No subjects have been added yet — contact your admin.</p>
+          )}
           {form.formState.errors.subject && (
             <p className="text-xs text-red-500">{form.formState.errors.subject.message}</p>
           )}

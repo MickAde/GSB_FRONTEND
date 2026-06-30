@@ -1,19 +1,16 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
-import { Plus, BookOpen, X, Check, ChevronRight } from 'lucide-react';
+import { Plus, BookOpen, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { LoadingPage } from '@/components/common/LoadingSpinner';
 import { useNotes } from '@/hooks/useNotes';
-import { useAuthStore } from '@/stores/authStore';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { getPerformanceStats } from '@/lib/api/quiz';
+import { getSubjectsForClass } from '@/lib/api/schools';
 import { queryKeys } from '@/lib/query-keys';
-import { STANDARD_SUBJECTS } from '@/lib/subjects';
 import { cn } from '@/lib/utils';
-
-const STORAGE_KEY = (uid: string) => `gsb_custom_subjects_${uid}`;
 
 function SubjectCard({
   subject,
@@ -54,74 +51,18 @@ function SubjectCard({
   );
 }
 
-function AddSubjectRow({
-  onAdd,
-}: {
-  onAdd: (name: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
-
-  const commit = () => {
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    onAdd(trimmed);
-    setValue('');
-    setOpen(false);
-  };
-
-  if (!open) {
-    return (
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-3 rounded-2xl border border-dashed border-border px-5 py-4 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary w-full"
-      >
-        <Plus className="h-4 w-4" /> Add Subject
-      </button>
-    );
-  }
-
-  return (
-    <div className="flex items-center gap-2 rounded-2xl border border-primary/40 bg-card px-4 py-3">
-      <Input
-        autoFocus
-        placeholder="Subject name…"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') setOpen(false); }}
-        className="h-8 flex-1 text-sm"
-      />
-      <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-600 hover:bg-emerald-50" onClick={commit}><Check className="h-4 w-4" /></Button>
-      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:bg-muted" onClick={() => setOpen(false)}><X className="h-4 w-4" /></Button>
-    </div>
-  );
-}
-
 export default function SubjectsPage() {
-  const { userId } = useAuthStore();
+  const { data: me } = useCurrentUser();
+  const classId = me?.student_class_id ?? null;
+
+  const { data: dbSubjects = [] } = useQuery({
+    queryKey: queryKeys.subjects(classId),
+    queryFn:  () => getSubjectsForClass(classId),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const { data: notesData, isLoading } = useNotes({ page: 1 });
   const { data: perf } = useQuery({ queryKey: queryKeys.quiz.performance(), queryFn: getPerformanceStats });
-
-  const [customSubjects, setCustomSubjects] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!userId) return;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY(userId));
-      setCustomSubjects(stored ? JSON.parse(stored) : []);
-    } catch { setCustomSubjects([]); }
-  }, [userId]);
-
-  const saveCustom = (list: string[]) => {
-    setCustomSubjects(list);
-    if (userId) localStorage.setItem(STORAGE_KEY(userId), JSON.stringify(list));
-  };
-
-  const addSubject = (name: string) => {
-    const all = [...STANDARD_SUBJECTS as unknown as string[]];
-    if (all.includes(name) || customSubjects.includes(name)) return;
-    saveCustom([...customSubjects, name]);
-  };
 
   // Build note + quiz counts per subject
   const allNotes = notesData?.results ?? [];
@@ -149,13 +90,19 @@ export default function SubjectsPage() {
     return map;
   }, [perf]);
 
-  // Only show subjects that have notes OR are standard (always visible)
-  const allSubjectNames = [...STANDARD_SUBJECTS as unknown as string[], ...customSubjects];
+  // DB subjects + any orphaned note subjects (e.g. uploaded before subjects were DB-managed)
+  const allSubjectNames = useMemo(() => {
+    const dbNames = dbSubjects.map((s) => s.name);
+    const dbSet   = new Set(dbNames);
+    const orphaned = Object.keys(noteCounts).filter((s) => !dbSet.has(s));
+    return [...dbNames, ...orphaned];
+  }, [dbSubjects, noteCounts]);
+
   const enrolledSubjects = allSubjectNames.filter(
-    (s) => (noteCounts[s] ?? 0) > 0 || (quizCounts[s] ?? 0) > 0
+    (s) => (noteCounts[s] ?? 0) > 0 || (quizCounts[s] ?? 0) > 0,
   );
   const emptySubjects = allSubjectNames.filter(
-    (s) => (noteCounts[s] ?? 0) === 0 && (quizCounts[s] ?? 0) === 0
+    (s) => (noteCounts[s] ?? 0) === 0 && (quizCounts[s] ?? 0) === 0,
   );
 
   if (isLoading) return <LoadingPage />;
@@ -211,7 +158,6 @@ export default function SubjectsPage() {
         </section>
       )}
 
-      <AddSubjectRow onAdd={addSubject} />
     </div>
   );
 }

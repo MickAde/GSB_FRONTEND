@@ -16,7 +16,24 @@ import type {
   BulkCreateResult,
   UpdateUserPayload,
   SetPasswordPayload,
+  Subject,
+  CreateSubjectPayload,
+  UpdateSubjectPayload,
 } from '@/types';
+
+// ── Subjects ──────────────────────────────────────────────────
+
+export const getSubjects = (): Promise<Subject[]> =>
+  apiClient.get<Subject[]>('/admin/subjects/').then((r) => r.data);
+
+export const createSubject = (payload: CreateSubjectPayload): Promise<Subject> =>
+  apiClient.post<Subject>('/admin/subjects/', payload).then((r) => r.data);
+
+export const updateSubject = (id: string, payload: UpdateSubjectPayload): Promise<Subject> =>
+  apiClient.patch<Subject>(`/admin/subjects/${id}/`, payload).then((r) => r.data);
+
+export const deleteSubject = (id: string): Promise<void> =>
+  apiClient.delete(`/admin/subjects/${id}/`).then(() => undefined);
 
 // ── Classes ───────────────────────────────────────────────────
 

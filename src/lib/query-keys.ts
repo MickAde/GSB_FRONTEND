@@ -27,6 +27,8 @@ export const queryKeys = {
     detail: (id: string)       => ['admin', 'users', id] as const,
   },
   adminClasses:    () => ['admin', 'classes'] as const,
+  adminSubjects:   () => ['admin', 'subjects'] as const,
+  subjects:        (classId?: string | null) => ['subjects', classId ?? 'all'] as const,
   adminSchool:     () => ['admin', 'school'] as const,
   adminCulture:    () => ['admin', 'culture'] as const,
   adminDailyContent: (filters?: object) => ['admin', 'daily-content', filters] as const,

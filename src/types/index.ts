@@ -110,6 +110,32 @@ export interface SchoolClass {
   member_count: number;
 }
 
+export interface Subject {
+  id:           string;
+  name:         string;
+  is_general:   boolean;
+  class_ids:    string[];
+  class_names:  string[];
+}
+
+export interface SubjectListItem {
+  id:         string;
+  name:       string;
+  is_general: boolean;
+}
+
+export interface CreateSubjectPayload {
+  name:       string;
+  is_general: boolean;
+  class_ids:  string[];
+}
+
+export interface UpdateSubjectPayload {
+  name?:       string;
+  is_general?: boolean;
+  class_ids?:  string[];
+}
+
 export interface UserListItem {
   id:                 string;
   role:               UserRole;
@@ -372,8 +398,8 @@ export interface QuizQuestion {
   option_b:      string;
   option_c:      string;
   option_d:      string;
-  correct?:      string;       // only present after submitting an attempt
-  explanation?:  string;       // only present after submitting an attempt
+  correct:       string;       // always present (returned in QuizDetail for client-side feedback)
+  explanation?:  string;       // only present in attempt results
 }
 
 export interface QuizDetail extends QuizListItem {
