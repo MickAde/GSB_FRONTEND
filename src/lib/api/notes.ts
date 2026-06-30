@@ -60,6 +60,9 @@ export const getSchoolNotes = (filters?: SchoolNoteFilters): Promise<PaginatedRe
 export const getNoteDetail = (id: string): Promise<NoteDetail> =>
   apiClient.get<NoteDetail>(`/notes/${id}/`).then((r) => r.data);
 
+export const getSchoolNoteDetail = (id: string): Promise<NoteDetail> =>
+  apiClient.get<NoteDetail>(`/notes/school/${id}/`).then((r) => r.data);
+
 export const getNoteStatus = (id: string): Promise<NoteStatusPoll> =>
   apiClient.get<NoteStatusPoll>(`/notes/${id}/status/`).then((r) => r.data);
 

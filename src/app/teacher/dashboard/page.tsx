@@ -35,7 +35,9 @@ export default function TeacherDashboardPage() {
           <h1 className="mt-0.5 text-3xl font-bold font-display text-foreground">
             Hey, {user?.first_name ?? '…'}!
           </h1>
-          <p className="mt-1 text-muted-foreground">Here&apos;s your teaching overview.</p>
+          <p className="mt-1 text-muted-foreground">
+            {user?.student_class_name ? `Class: ${user.student_class_name}` : 'Here’s your teaching overview.'}
+          </p>
         </div>
         <Link href="/teacher/notes/upload">
           <Button className="gradient-primary h-11 gap-2 rounded-2xl font-bold text-white shadow-lg shadow-primary/25 hover:opacity-90 transition-opacity">
@@ -71,7 +73,7 @@ export default function TeacherDashboardPage() {
         </Link>
         <Link href="/teacher/notes/school">
           <Button variant="ghost" className="rounded-xl gap-1 text-primary">
-            Browse school notes <ArrowRight className="h-3.5 w-3.5" />
+            Browse class notes <ArrowRight className="h-3.5 w-3.5" />
           </Button>
         </Link>
       </div>

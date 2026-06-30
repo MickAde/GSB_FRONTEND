@@ -1,22 +1,114 @@
 'use client';
 import { use, useState } from 'react';
 import Link from 'next/link';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ArrowLeft, Download, Trash2, AlertTriangle, Loader2, Sparkles, Brain } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, AlertTriangle, Loader2, Sparkles, Brain, CheckCircle2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LoadingPage } from '@/components/common/LoadingSpinner';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { AISummaryCard } from '@/components/notes/AISummaryCard';
 import { useNoteDetail } from '@/hooks/useNotes';
-import { deleteNote } from '@/lib/api/notes';
+import { deleteNote, getConformityReports } from '@/lib/api/notes';
 import { queryKeys } from '@/lib/query-keys';
-import { formatDate, formatFileSize } from '@/lib/utils';
+import { formatDate, formatFileSize, cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import type { ConformityReport } from '@/types';
+
+// ── Conformity score card ─────────────────────────────────────
+
+function ConformityCard({ report }: { report: ConformityReport }) {
+  const pct    = report.conformity_percentage ? parseFloat(report.conformity_percentage) : null;
+  const isDone = report.status === 'DONE';
+  const color  = pct === null ? '#94a3b8' : pct >= 75 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444';
+  const label  = pct === null ? '—' : pct >= 75 ? 'Excellent' : pct >= 50 ? 'Good' : 'Needs Work';
+
+  const R = 28; const C = 2 * Math.PI * R;
+  const dash = isDone && pct !== null ? (pct / 100) * C : 0;
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <p className="mb-4 text-sm font-bold text-foreground">Conformity Score</p>
+      <div className="flex items-center gap-5">
+        {/* Ring */}
+        <div className="relative h-20 w-20 shrink-0">
+          <svg viewBox="0 0 72 72" className="h-full w-full -rotate-90">
+            <circle cx="36" cy="36" r={R} fill="none" strokeWidth="7" className="stroke-muted/40" />
+            <circle
+              cx="36" cy="36" r={R} fill="none"
+              stroke={color} strokeWidth="7" strokeLinecap="round"
+              strokeDasharray={`${dash} ${C}`}
+              style={{ transition: 'stroke-dasharray 0.8s ease' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            {isDone && pct !== null ? (
+              <>
+                <span className="text-lg font-extrabold tabular-nums" style={{ color }}>{Math.round(pct)}%</span>
+              </>
+            ) : report.status === 'FAILED' ? (
+              <AlertTriangle className="h-6 w-6 text-muted-foreground" />
+            ) : (
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            )}
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="min-w-0 flex-1">
+          {isDone && pct !== null ? (
+            <>
+              <span
+                className={cn('inline-block rounded-full px-2.5 py-0.5 text-xs font-bold',
+                  pct >= 75 ? 'bg-emerald-100 text-emerald-700' :
+                  pct >= 50 ? 'bg-amber-100 text-amber-700' :
+                              'bg-rose-100 text-rose-700'
+                )}
+              >
+                {label}
+              </span>
+              <p className="mt-2 text-xs text-muted-foreground leading-relaxed line-clamp-4">
+                {report.similarity_analysis}
+              </p>
+            </>
+          ) : report.status === 'PENDING' || report.status === 'PROCESSING' ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="h-4 w-4 shrink-0" />
+              <span>Your teacher's reference note is being compared to yours. Check back soon.</span>
+            </div>
+          ) : report.status === 'FAILED' ? (
+            <p className="text-sm text-muted-foreground">Conformity analysis could not be completed.</p>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NoConformityNote() {
+  return (
+    <div className="rounded-2xl border border-dashed border-border px-5 py-4 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2">
+        <CheckCircle2 className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+        <span>No teacher reference note found for this subject yet. Your conformity score will appear automatically once your teacher uploads one.</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────
 
 export default function StudentNoteDetailPage(props: { params: Promise<{ id: string }> }) {
   const { id } = use(props.params);
   const { data: note, isLoading, isError } = useNoteDetail(id);
+
+  const { data: conformityData } = useQuery({
+    queryKey: queryKeys.conformity.forNote(id),
+    queryFn:  () => getConformityReports({ student_note: id }),
+    enabled:  !!id,
+    staleTime: 30_000,
+  });
+  const conformityReport = conformityData?.results?.[0] ?? null;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting]       = useState(false);
   const qc     = useQueryClient();
@@ -123,6 +215,11 @@ export default function StudentNoteDetailPage(props: { params: Promise<{ id: str
       {note.status === 'READY' ? (
         <div className="space-y-4">
           <AISummaryCard note={note} />
+          {/* Conformity score — auto-generated by comparing with teacher's reference */}
+          {conformityReport
+            ? <ConformityCard report={conformityReport} />
+            : note.subject && <NoConformityNote />
+          }
           <div className="flex justify-end">
             <Link href={`/student/quiz/generate?note_id=${id}`}>
               <Button className="gap-2">
