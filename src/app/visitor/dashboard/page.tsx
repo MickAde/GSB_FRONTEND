@@ -19,7 +19,7 @@ export default function VisitorDashboardPage() {
             <p className="text-sm font-medium text-muted-foreground">{greeting.text} {greeting.emoji}</p>
           )}
           <h1 className="mt-0.5 text-3xl font-bold font-display text-foreground">
-            Hey, {user?.first_name ?? 'â€¦'}!
+            Hey, {user?.first_name ?? '…'}!
           </h1>
           <p className="mt-1 text-muted-foreground">Welcome to your visitor trial.</p>
         </div>

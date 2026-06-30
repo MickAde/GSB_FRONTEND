@@ -42,7 +42,7 @@ export function ForgotPasswordForm() {
         className="w-full bg-primary hover:bg-primary/90"
         disabled={form.formState.isSubmitting}
       >
-        {form.formState.isSubmitting ? 'Sendingâ€¦' : 'Send reset link'}
+        {form.formState.isSubmitting ? 'Sending…' : 'Send reset link'}
       </Button>
     </form>
   );

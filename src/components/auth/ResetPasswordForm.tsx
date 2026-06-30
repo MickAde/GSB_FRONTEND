@@ -48,7 +48,7 @@ export function ResetPasswordForm({ uid, token }: Props) {
   if (done) {
     return (
       <p className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-        Password reset successfully! Redirecting to loginâ€¦
+        Password reset successfully! Redirecting to login…
       </p>
     );
   }
@@ -74,7 +74,7 @@ export function ResetPasswordForm({ uid, token }: Props) {
         className="w-full bg-primary hover:bg-primary/90"
         disabled={form.formState.isSubmitting}
       >
-        {form.formState.isSubmitting ? 'Resettingâ€¦' : 'Reset Password'}
+        {form.formState.isSubmitting ? 'Resetting…' : 'Reset Password'}
       </Button>
     </form>
   );

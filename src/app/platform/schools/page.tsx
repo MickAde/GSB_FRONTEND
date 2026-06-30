@@ -184,7 +184,7 @@ export default function PlatformSchoolsPage() {
             <div className="flex justify-end gap-2">
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Savingâ€¦' : editSchool ? 'Save Changes' : 'Onboard School'}
+                {form.formState.isSubmitting ? 'Saving…' : editSchool ? 'Save Changes' : 'Onboard School'}
               </Button>
             </div>
           </form>

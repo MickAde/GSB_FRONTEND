@@ -119,7 +119,7 @@ export function LoginForm({ schoolId }: Props) {
               className="w-full bg-primary hover:bg-primary/90"
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? 'Logging inâ€¦' : `Login as ${tab === 'ADMIN' ? 'Admin' : tab.charAt(0) + tab.slice(1).toLowerCase()}`}
+              {form.formState.isSubmitting ? 'Logging in…' : `Login as ${tab === 'ADMIN' ? 'Admin' : tab.charAt(0) + tab.slice(1).toLowerCase()}`}
             </Button>
           </form>
         </TabsContent>

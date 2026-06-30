@@ -83,7 +83,7 @@ export default function AdminSchoolPage() {
 
             <div className="space-y-1">
               <Label>Logo URL</Label>
-              <Input {...form.register('logo_url')} disabled={!editing} placeholder="https://â€¦" />
+              <Input {...form.register('logo_url')} disabled={!editing} placeholder="https://…" />
               {form.watch('logo_url') && (
                 <img src={form.watch('logo_url')} alt="Logo preview" className="mt-2 h-16 w-16 rounded-full object-cover" />
               )}
@@ -120,7 +120,7 @@ export default function AdminSchoolPage() {
                   Cancel
                 </Button>
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? 'Savingâ€¦' : 'Save Changes'}
+                  {form.formState.isSubmitting ? 'Saving…' : 'Save Changes'}
                 </Button>
               </div>
             )}

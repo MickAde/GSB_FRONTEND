@@ -55,7 +55,7 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
     <main className="flex min-h-screen items-center justify-center">
       <div className="text-center">
         <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <p className="text-muted-foreground">Verifying your emailâ€¦</p>
+        <p className="text-muted-foreground">Verifying your email…</p>
       </div>
     </main>
   );
@@ -65,7 +65,7 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
       <div className="text-center">
         <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-500" />
         <h1 className="text-xl font-bold text-foreground">Email verified!</h1>
-        <p className="mt-1 text-muted-foreground">Redirecting to your dashboardâ€¦</p>
+        <p className="mt-1 text-muted-foreground">Redirecting to your dashboard…</p>
       </div>
     </main>
   );
@@ -82,7 +82,7 @@ export default function VerifyEmailPage(props: { searchParams: Promise<{ token?:
             <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <Button className="w-full bg-primary hover:bg-primary/90" onClick={handleResend} disabled={resending || !email}>
-            {resending ? 'Sendingâ€¦' : 'Resend verification email'}
+            {resending ? 'Sending…' : 'Resend verification email'}
           </Button>
         </div>
       </div>

@@ -125,7 +125,7 @@ export function CultureEditor() {
 
       <div className="flex justify-end">
         <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Savingâ€¦' : 'Save Culture Profile'}
+          {form.formState.isSubmitting ? 'Saving…' : 'Save Culture Profile'}
         </Button>
       </div>
     </form>

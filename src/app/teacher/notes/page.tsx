@@ -38,7 +38,7 @@ export default function TeacherNotesPage() {
         }
       />
       <Input
-        placeholder="Search by filename or subjectâ€¦"
+        placeholder="Search by filename or subject…"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="max-w-sm"

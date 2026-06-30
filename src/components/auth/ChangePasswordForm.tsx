@@ -66,7 +66,7 @@ export function ChangePasswordForm() {
         className="w-full bg-primary hover:bg-primary/90"
         disabled={form.formState.isSubmitting}
       >
-        {form.formState.isSubmitting ? 'Changingâ€¦' : 'Change Password'}
+        {form.formState.isSubmitting ? 'Changing…' : 'Change Password'}
       </Button>
     </form>
   );

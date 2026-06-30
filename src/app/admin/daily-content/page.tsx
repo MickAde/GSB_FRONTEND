@@ -145,7 +145,7 @@ export default function DailyContentPage() {
             <div className="flex justify-end gap-2">
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Savingâ€¦' : 'Save'}
+                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
               </Button>
             </div>
           </form>

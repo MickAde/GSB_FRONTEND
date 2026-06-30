@@ -73,7 +73,7 @@ export function VisitorRegisterForm() {
         <p className="text-sm text-muted-foreground">We&apos;ve sent a verification link to <strong>{email}</strong></p>
         <p className="text-xs text-muted-foreground">The link expires in 24 hours.</p>
         <Button variant="outline" onClick={handleResend} disabled={resending}>
-          {resending ? 'Resendingâ€¦' : 'Resend verification email'}
+          {resending ? 'Resending…' : 'Resend verification email'}
         </Button>
       </div>
     );
@@ -129,7 +129,7 @@ export function VisitorRegisterForm() {
         className="w-full bg-primary hover:bg-primary/90"
         disabled={form.formState.isSubmitting}
       >
-        {form.formState.isSubmitting ? 'Creating accountâ€¦' : 'Create Account'}
+        {form.formState.isSubmitting ? 'Creating account…' : 'Create Account'}
       </Button>
     </form>
   );
