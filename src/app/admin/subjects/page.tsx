@@ -294,8 +294,9 @@ export default function AdminSubjectsPage() {
   const handleAdd    = (name: string, isGeneral: boolean, classIds: string[]) =>
     createMut.mutateAsync({ name, isGeneral, classIds });
 
-  const handleSave   = (id: string, name: string, isGeneral: boolean, classIds: string[]) =>
-    updateMut.mutateAsync({ id, name, isGeneral, classIds });
+  const handleSave   = async (id: string, name: string, isGeneral: boolean, classIds: string[]): Promise<void> => {
+    await updateMut.mutateAsync({ id, name, isGeneral, classIds });
+  };
 
   const handleDelete = (id: string, name: string) => {
     if (confirm(`Delete subject "${name}"? This won't affect existing notes or lesson plans.`))
