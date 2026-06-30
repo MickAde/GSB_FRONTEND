@@ -24,15 +24,15 @@ export default function StudentDashboardPage() {
   const subjects    = [...new Set(notes?.results?.map((n) => n.subject).filter(Boolean))].length;
   const needsReview = notes?.results?.filter((n) => n.status === 'AWAITING_STUDENT_APPROVAL').length ?? 0;
 
-  const readiness = perf ? Math.round(perf.readiness_score) : null;
-  const streak    = perf?.study_streak ?? null;
+  const avgScore = perf ? Math.round(perf.overall_average) : null;
+  const streak   = perf?.study_streak ?? null;
 
   const statCards = [
     { label: 'Total Notes',     value: totalNotes, icon: Layers,      bg: 'from-violet-50 to-white',   ring: 'text-primary',        iconBg: 'bg-primary/10' },
     { label: 'Summaries Ready', value: readyNotes, icon: CheckCircle, bg: 'from-emerald-50 to-white',  ring: 'text-emerald-600',    iconBg: 'bg-emerald-100' },
     { label: 'Subjects',        value: subjects,   icon: BookOpen,    bg: 'from-amber-50 to-white',    ring: 'text-amber-600',      iconBg: 'bg-amber-100' },
-    ...(readiness !== null ? [{ label: 'Readiness Score', value: `${readiness}%`, icon: Brain, bg: 'from-blue-50 to-white', ring: 'text-blue-600', iconBg: 'bg-blue-100' }] : []),
-    ...(streak !== null    ? [{ label: 'Study Streak',    value: `${streak}d`,    icon: Flame, bg: 'from-orange-50 to-white', ring: 'text-orange-600', iconBg: 'bg-orange-100' }] : []),
+    ...(avgScore !== null ? [{ label: 'Avg. Quiz Score', value: `${avgScore}%`, icon: Brain, bg: 'from-blue-50 to-white', ring: 'text-blue-600', iconBg: 'bg-blue-100' }] : []),
+    ...(streak !== null   ? [{ label: 'Study Streak',   value: `${streak}d`,   icon: Flame, bg: 'from-orange-50 to-white', ring: 'text-orange-600', iconBg: 'bg-orange-100' }] : []),
   ];
 
   return (
