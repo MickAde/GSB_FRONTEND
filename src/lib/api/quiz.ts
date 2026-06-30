@@ -1,6 +1,7 @@
 import apiClient from './client';
 import type {
   CreateQuizPayload,
+  PerformanceHistoryPoint,
   PerformanceStats,
   QuizAttemptResult,
   QuizDetail,
@@ -37,6 +38,12 @@ export const getAttemptResult = (id: string): Promise<QuizAttemptResult> =>
 
 export const getPerformanceStats = (): Promise<PerformanceStats> =>
   apiClient.get<PerformanceStats>('/quiz/performance/').then((r) => r.data);
+
+export const getPerformanceHistory = (): Promise<PerformanceHistoryPoint[]> =>
+  apiClient.get<PerformanceHistoryPoint[]>('/quiz/performance/history/').then((r) => r.data);
+
+export const getClassPerformanceHistory = (): Promise<PerformanceHistoryPoint[]> =>
+  apiClient.get<PerformanceHistoryPoint[]>('/quiz/teacher/class-history/').then((r) => r.data);
 
 export const getTeacherStudentStats = (): Promise<StudentPerformanceSummary[]> =>
   apiClient.get<StudentPerformanceSummary[]>('/quiz/teacher/students/').then((r) => r.data);

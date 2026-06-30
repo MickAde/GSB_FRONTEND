@@ -3,8 +3,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard, BookOpen, Brain, Users, FileBarChart2,
-  User, LogOut, Menu, Settings,
+  LayoutDashboard, BookOpen, Brain, Users,
+  User, LogOut, Menu, Settings, BarChart2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -163,8 +163,8 @@ const studentLinks: SidebarLink[] = [
   { href: '/student/dashboard',       icon: LayoutDashboard, label: 'Dashboard',       mobileLabel: 'Home'    },
   { href: '/student/subjects',        icon: BookOpen,        label: 'Subjects',        mobileLabel: 'Subjects'},
   { href: '/student/quiz',            icon: Brain,           label: 'Quiz Centre',     mobileLabel: 'Quiz'    },
+  { href: '/student/performance',     icon: BarChart2,       label: 'Performance',     mobileLabel: 'Stats'   },
   { href: '/student/study-groups',    icon: Users,           label: 'Study Groups',    mobileLabel: 'Groups'  },
-  { href: '/student/academic-report', icon: FileBarChart2,   label: 'Academic Report', mobileLabel: 'Report'  },
   { href: '/student/profile',         icon: User,            label: 'Profile',                                },
   { href: '/student/settings',        icon: Settings,        label: 'Settings',                               },
 ];

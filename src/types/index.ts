@@ -453,6 +453,12 @@ export interface RecentAttempt {
   completed_at: string;
 }
 
+export interface PerformanceHistoryPoint {
+  date:    string;  // 'YYYY-MM-DD'
+  average: number;  // 0-100
+  count:   number;  // quizzes that day
+}
+
 export interface PerformanceStats {
   total_attempts:       number;
   overall_average:      number;
